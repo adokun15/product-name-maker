@@ -2,6 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+
+::-webkit-scrollbar {
+    width: 0px;
+}
+
 :root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
@@ -14,4 +19,65 @@
     --background-start-rgb: 0, 0, 0;
     --background-end-rgb: 0, 0, 0;
   }
+}
+
+button{
+  outline:none;
+}
+
+.filled_large_btn_black{
+  padding: 0.5rem 1rem;
+  border-radius:1rem;
+  font-size:1rem;
+  color:white; 
+  background:black;
+  border:1px solid black;
+  
+}
+
+.filled_large_btn_black:hover{
+background:white;
+color:black;
+outline:black;
+transition:all 0.3s ease-in-out;
+}
+
+.outline_large_btn_black{
+background:white;
+color:black;
+outline:black;
+  border:1px solid black;
+  border-radius:1rem;
+  font-size:1rem;
+  padding: 0.5rem 1rem;
+
+}
+.outline_large_btn_black:hover{
+  color:white; 
+  background:black;
+transition:all 0.3s ease-in-out;
+  }
+
+
+.outline_small_btn{}
+.filled_small_btn_orange{
+   padding: 0.5rem 1rem;
+  border-radius:1rem;
+  font-size:1rem;
+  color:white; 
+  background: rgb(234 88 12 / 1);
+  border:1px solid orange;
+}
+.filled_small_btn_orange:hover{
+  border:1px solid orange;
+ background:white;
+color:orange;
+outline:orange;
+transition:all 0.3s ease-in-out;
+ 
+}
+.error-text{
+  color:red;
+  font-weight:800;
+  margin-bottom:30px;
 }

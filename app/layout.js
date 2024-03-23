@@ -1,14 +1,18 @@
-import "@styles/globals.css";
+import "@/styles/globals.css";
 
+import NavBar from "@/components/NavBar";
+import "@fortawesome/fontawesome-svg-core/styles.css";
+import { config } from "@fortawesome/fontawesome-svg-core";
+config.autoAddCss = false;
 /*import { Inter } from 'next/font/google'
 
 const inter = Inter({ subsets: ['latin'] })
 
 */
 export const metadata = {
-  title: "ProductMaker",
-  description:
-    "A website that creates suggestive names of products for it user.",
+  title: "Namify",
+
+  description: "A website that generates suggestive names",
 };
 export default function RootLayout({ children }) {
   return (
