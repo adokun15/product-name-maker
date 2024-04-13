@@ -9,19 +9,15 @@ import img3 from "../public/testimonial/helena-lopes-t-wm8iXgvgA-unsplash.jpg";
 import img4 from "../public/testimonial/sebastian-pandelache-CicDjqp0I5w-unsplash.jpg";
 const Testimonials = () => {
   return (
-    <section className="my-6 block px-4 m-auto w-8/10">
-      <h1 className="text-7xl border-solid border-b-2 border-orange-500 w-[45%] my-8 md:text-end md:my-[6rem] ">
+    <section className="md:my-6 my-[2.79rem] block px-4 m-auto w-8/10">
+      <h1 className="md:text-7xl text-[2rem] border-solid border-b-2 border-orange-500 w-[45%] my-8 md:text-end md:my-[6rem] ">
         Testimonials
       </h1>
       <div className="w-[95%]  md:grid grid-cols-3 gap-5 md:px-12 m-auto">
-        <figure className="my-4 bg-slate-800 rounded-xl p-8 dark:bg-slate-800">
-          <Image
-            className="w-24 h-24 rounded-full mx-auto"
-            src={img1}
-            alt=""
-            width="512"
-            height="512"
-          />
+        <figure className="my-4  bg-slate-800 rounded-xl p-8 dark:bg-slate-800">
+          <div className="w-32 h-32 mx-auto relative">
+            <Image className="rounded-full z-[10]" src={img1} alt="" fill />
+          </div>
           <div className="pt-6 text-center space-y-4">
             <blockquote>
               <p className="text-lg text-white font-medium text-center">
@@ -32,23 +28,17 @@ const Testimonials = () => {
             </blockquote>
             <figcaption className="font-medium">
               <div className="text-orange-600 dark:text-sky-400">
-                Christine Collins
+                Ibukun Folorunsho
               </div>
-              <div className="text-slate-500 dark:text-slate-500">
-                Social Media Influencer
-              </div>
+              <div className="text-slate-500 dark:text-slate-500">Student</div>
             </figcaption>
           </div>
         </figure>
 
         <figure className="my-4 bg-slate-800 rounded-xl p-8 dark:bg-slate-800">
-          <Image
-            className="w-24 h-24 rounded-full mx-auto"
-            src={img2}
-            alt=""
-            width="384"
-            height="512"
-          />
+          <div className="w-32 h-32 mx-auto relative">
+            <Image className="rounded-full" src={img2} alt="" fill />
+          </div>
           <div className="pt-6 text-center space-y-4">
             <blockquote>
               <p className="text-lg text-white font-medium text-center">
@@ -58,22 +48,18 @@ const Testimonials = () => {
               </p>
             </blockquote>
             <figcaption className="font-medium">
-              <div className="text-orange-600 dark:text-sky-400">
-                Seyon Tobilloba
+              <div className="text-orange-600 dark:text-sky-400">Adam Hart</div>
+              <div className="text-slate-500 dark:text-slate-500">
+                Social Media Influencer
               </div>
-              <div className="text-slate-500 dark:text-slate-500">Student </div>
             </figcaption>
           </div>
         </figure>
 
         <figure className="my-4 bg-slate-800 rounded-xl p-8 dark:bg-slate-800">
-          <Image
-            className="w-24 h-24 rounded-full mx-auto"
-            src={img3}
-            alt=""
-            width="384"
-            height="512"
-          />
+          <div className="w-32 h-32 mx-auto relative">
+            <Image className="rounded-full" src={img3} alt="" fill />
+          </div>
           <div className="pt-6 text-center space-y-4">
             <blockquote>
               <p className="text-lg text-white font-medium text-center">
@@ -84,7 +70,7 @@ const Testimonials = () => {
             </blockquote>
             <figcaption className="font-medium">
               <div className="text-orange-600 dark:text-sky-400">
-                Echemazu James
+                Alice Griffo
               </div>
               <div className="text-slate-500 dark:text-slate-500">
                 Business Owner
@@ -94,11 +80,9 @@ const Testimonials = () => {
         </figure>
 
         <figure className="my-4 bg-slate-800 rounded-xl p-8 dark:bg-slate-800">
-          <Image
-            className="w-[13rem] h-[13rem] rounded-[48%] mx-auto"
-            src={img4}
-            alt=""
-          />
+          <div className="w-32 h-32 mx-auto relative">
+            <Image className="rounded-full" src={img4} alt="" fill />
+          </div>
           <div className="pt-6 text-center space-y-4">
             <blockquote>
               <p className="text-lg text-white font-medium text-center">
@@ -109,10 +93,10 @@ const Testimonials = () => {
             </blockquote>
             <figcaption className="font-medium">
               <div className="text-orange-600 dark:text-sky-400">
-                Adeyeye Folorunsho
+                Mark Schmidtmann
               </div>
               <div className="text-slate-500 dark:text-slate-500">
-                shop owner
+                Self-Employed
               </div>
             </figcaption>
           </div>

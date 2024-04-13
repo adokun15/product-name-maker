@@ -10,6 +10,7 @@ import {
   faPenClip,
   faPenRuler,
   faScaleBalanced,
+  faSmile,
   faThermometer,
   faTrademark,
 } from "@fortawesome/free-solid-svg-icons";
@@ -61,31 +62,30 @@ const OtherFeatures = () => {
     },
   ];
   return (
-    <section className="my-6 block px-4 m-auto w-full">
-      <h1 className="md:text-7xl text-4xl italic mx-3 border-solid border-b-2 border-orange-500  my-5  md:my-[6rem] ">
+    <section className="md:my-6 my-[5.99rem] block px-4 m-auto w-full">
+      <h1 className="md:text-7xl text-4xl text-center md:text-start italic mx-3 border-solid border-b-2 border-orange-500  my-5  md:my-[6rem] ">
         What Else is there to Explore...
       </h1>
       <div className="">
-        <ul className="md:grid block w-full m-auto min-h-[30rem] *:mb-4 p-8 from-orange-400  to-orange-300 rounded bg-gradient-to-tl grid-cols-1 md:grid-cols-2 gap-[3rem]">
+        <ul className="md:grid block w-full m-auto min-h-[30rem] md:p-8 p-3 rounded-[0.8rem] from-orange-400  to-orange-300 md:rounded bg-gradient-to-tl grid-cols-1 md:grid-cols-2 gap-[1.6rem]">
           {dummy_Object.map((feature) => (
             <Card
               key={feature.id}
-              className="lg:w-full w-[90%] m-auto h-[100%] bg-white shadow-lg rounded-[0.9rem] text-black p-2"
+              className="w-full m-auto h-[100%] bg-white shadow-lg rounded-[0.9rem] text-black lg:w-full md:p-2"
             >
               <p className="text-center m-auto block text-4xl mb-3">
                 <FontAwesomeIcon icon={feature.icon} />
               </p>
-              <h1 className="text-center font-bold text-xl">{feature.name}</h1>
+              <h1 className="text-center font-bold md:text-xl text-[1.44rem]">
+                {feature.name}
+              </h1>
 
-              <p className="mt-8 text-center text-xl  ">
+              <p className="md:mt-8 mt-4 text-center md:text-xl text-[0.99rem] ">
                 {feature.description}
               </p>
             </Card>
           ))}
         </ul>
-        <button className="filled_small_btn_orange text-center block m-auto my-4">
-          Get Started Now
-        </button>
       </div>
     </section>
   );

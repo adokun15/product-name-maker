@@ -3,7 +3,7 @@ import { usePathname } from "next/navigation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleCheck, faTools } from "@fortawesome/free-solid-svg-icons";
 
-export const Categorized = ({ header, contents }) => {
+export const Categorized = ({ uid, contents }) => {
   const pathname = usePathname();
 
   return (
@@ -16,11 +16,9 @@ export const Categorized = ({ header, contents }) => {
         {contents.map((content) => (
           <li className="text-[15px] ml-4" key={content.name}>
             <Link
-              href={`/overview/${content.redirectLink}`}
+              href={`/overview/${uid}/${content.redirectLink}`}
               className={`${
-                pathname === `overview/${content.redirectLink}`
-                  ? "font-bold"
-                  : ""
+                pathname === `${uid}/${content.redirectLink}` ? "font-bold" : ""
               } flex items-center gap-4`}
             >
               <FontAwesomeIcon icon={faCircleCheck} />

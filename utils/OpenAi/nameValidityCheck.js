@@ -4,7 +4,7 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-export async function NameValidator(prompt) {
+export async function TradeMarkNameValidator(prompt) {
   const assistant =
     "You are a TradeMark Name checking Service. You will validate if the name given already in use and give accurate result in a short sentence.";
 
@@ -19,14 +19,18 @@ export async function NameValidator(prompt) {
       ],
       model: "gpt-3.5-turbo",
     });
-    console.log(completion);
+
     return {
       message: completion.choices[0].message.content,
       created: completion.created,
       chatId: completion.id,
+      usage: {
+        totalToken: completion.usage.total_tokens,
+        completionToken: completion.usage.completion_tokens,
+        promptToken: completion.usage.prompt_tokens,
+      },
     };
   } catch (err) {
-    console.log(err);
-    //throw new Error(err);
+    return { message: err?.message, error: true };
   }
 }

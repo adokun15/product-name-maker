@@ -1,5 +1,6 @@
 import Card from "@/components/Card";
 import NavBar from "@/components/NavBar";
+import NewsLetter from "@/components/NewsLetter";
 import OtherFeatures from "@/components/OtherFeatures";
 import Spacer from "@/components/spacer";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -84,6 +85,7 @@ const Features = () => {
           </ul>
         </div>
       </div>
+      <NewsLetter />
     </div>
   );
 };

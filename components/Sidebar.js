@@ -1,139 +1,21 @@
 "use client";
-import Image from "next/image";
-import LogoImg from "../public/icons/icons8-pen-30.png";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { Categorized } from "./CategorizedSideBar";
-import {
-  faBinoculars,
-  faHandshake,
-  faHouse,
-  faMoneyCheck,
-  faStore,
-  faToolbox,
-} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useUser } from "@/hook/useUser";
+
+import { useAuth } from "@/utils/Provider/AuthProvider";
+import SidebarLink from "./SideBarLinks";
 
 const Sidebar = () => {
-  const user = useUser();
-  const { uid } = user.cUser;
+  const user = useAuth();
 
-  const pathname = usePathname();
+  if (!user.currentUser) return null;
+
+  const { uid } = user.currentUser;
 
   return (
     <div
-      className="from-orange-400 relative h-fit overflow-scroll bg-gradient-to-br to-orange-600 z-[40] w-full col-end-1 
-    row-span-10 px-8 text-white "
+      className={`from-orange-400  md:relative md:block hidden h-fit overflow-scroll bg-gradient-to-br  to-orange-600 w-[50%] md:z-[40] md:w-full col-end-1 
+    row-span-10 px-8 text-white `}
     >
-      <section className="py-8 border-b-2 border-solid border-white">
-        <Link href="/">
-          <div className="flex items-center gap-3 ">
-            <Image
-              height={30}
-              className="rounded-[50%] "
-              width={30}
-              src={LogoImg}
-              unoptimized
-              alt="Logo"
-            />
-            <p className="text-2xl font-bold">Namify</p>
-          </div>
-        </Link>
-      </section>
-
-      <div className="list-none text-start leading-[3.9rem] text-xl  my-2">
-        <div className="mb-6 *:inline">
-          <Link
-            href="/overview"
-            className={`${pathname === "/overview" ? "font-bold" : ""} block`}
-          >
-            <p className="block">
-              <FontAwesomeIcon className="mr-4" icon={faHouse} />
-              DashBoard
-            </p>
-          </Link>
-
-          <Link
-            href="/overview/name-availablity"
-            className={`${
-              pathname === "/overview/name-availablity" ? "font-bold" : ""
-            } text-start my-5`}
-          >
-            <p className="block">
-              <FontAwesomeIcon className="mr-4" icon={faBinoculars} />
-              Name Availability Checker
-            </p>
-          </Link>
-        </div>
-
-        <div className="mb-6">
-          <Categorized
-            header="User Tools"
-            contents={[
-              {
-                redirectLink: "product-naming",
-                name: "AI generated Product Name",
-              },
-              { redirectLink: "brand-naming", name: "Brand Name" },
-              { redirectLink: "startup-naming", name: "Startup Name" },
-              {
-                redirectLink: "domain-naming",
-                name: "AI generated Domain Name",
-              },
-              {
-                redirectLink: "character-naming",
-                name: "AI generated Character Name",
-              },
-            ]}
-          />
-        </div>
-
-        <div className="mb-6 *:block">
-          <Link
-            href={`/overview/subscription?id=${uid}`}
-            className={`${
-              pathname === `/overview/subscription?id=${uid}` ? "font-bold" : ""
-            } text-start my-5`}
-          >
-            <p className="block">
-              <FontAwesomeIcon className="mr-4" icon={faMoneyCheck} />
-              Subscription
-            </p>
-          </Link>
-          <Link
-            href="/overview/t&c"
-            className={`${
-              pathname === "/overview/t&c" ? "font-bold" : ""
-            } text-start my-5`}
-          >
-            {" "}
-            <p className="block">
-              <FontAwesomeIcon className="mr-4" icon={faHandshake} />
-              Terms and Conditions
-            </p>{" "}
-          </Link>
-          <Link
-            href="/overview/settings"
-            className={`${
-              pathname === "/overview/settings" ? "font-bold" : ""
-            } text-start my-5 capitalize`}
-          >
-            {" "}
-            <p className="block">
-              <FontAwesomeIcon className="mr-4" icon={faToolbox} />
-              settings
-            </p>{" "}
-          </Link>
-        </div>
-      </div>
-
-      <button
-        className="filled_small_btn_orange"
-        onClick={() => router.push("/overview/upgrade")}
-      >
-        Upgrade to Pro
-      </button>
+      <SidebarLink uid={uid} />
     </div>
   );
 };

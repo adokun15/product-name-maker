@@ -1,22 +1,21 @@
 "use client";
-import ProjectHistory from "@/components/ProjectHistory";
-import TopDashBoard from "@/components/TopDashBoard";
-import { faSpinner } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { useEffect } from "react";
-import AiDashboard from "./_helper/AiDashboard";
-import VerifyEmail from "@/components/VerifyEmail";
 
-const DashBoard = () => {
-  return (
-    <div className="px-6">
-      <h1 className="text-3xl mb-8 text-orange-700">DashBoard</h1>
+import { useAuth } from "@/utils/Provider/AuthProvider";
+import LoaderPage from "./[uid]/_helper/loaderPage";
+import { useRouter } from "next/navigation";
 
-      <TopDashBoard />
-      <AiDashboard></AiDashboard>
-      <VerifyEmail />
-    </div>
-  );
-};
+export default function Overview() {
+  const user = useAuth();
+  const router = useRouter();
 
-export default DashBoard;
+  if (user.loading) return <LoaderPage message="redirecting..." />;
+
+  const { currentUser, loading } = user;
+
+  if (currentUser?.uid) {
+    router.push(`/overview/${currentUser?.uid}`);
+  } else {
+    router.push(`/auth`);
+  }
+  return <></>;
+}

@@ -3,23 +3,20 @@ import React from "react";
 
 async function GetUserFunc(id) {
   try {
-    const user = await userDatabase(id);
     return user;
   } catch (err) {
-    if (err.message.includes("client is offline")) {
-      return { error: true, errorMesage: "No Internet Connection" };
-    } else {
-      return { error: true, errorMesage: err.message };
-    }
+    return { error: err?.message };
   }
 }
 
 export default async function SideDashboard({ uid }) {
-  const user = await GetUserFunc(uid);
+  const user = await userDatabase(uid);
 
-  if (!user) return <p className="text-white">Something is wrong</p>;
-  if (user && user?.error)
-    return <p className="text-white">{user.errorMesage}</p>;
+  if (user.error) {
+    <div>
+      <p className="font-bold text-xl text-center">{user?.message}</p>
+    </div>;
+  }
 
   return (
     <div className="text-white">

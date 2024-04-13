@@ -1,28 +1,25 @@
 "use client";
 import Image from "next/image";
 import someIcon from "../public/illustrations/illustration-Home(1).png";
-import { useRouter } from "next/navigation";
-import { getAuth } from "firebase/auth";
-import { useUser } from "@/hook/useUser";
 import myImageLoader from "@/lib/ImageLoader";
-import SideDashboard from "./SideDashboard";
-import { Suspense } from "react";
-import LoaderPage from "@/app/overview/_helper/loaderPage";
-import LoaderText from "@/app/overview/_helper/LoaderText";
-export default function TopDashBoard() {
-  const router = useRouter();
-  const user = useUser();
-  const { photoURL, displayName, email, uid } = user.cUser;
+import { useAuth } from "@/utils/Provider/AuthProvider";
+import LoaderText from "@/app/overview/[uid]/_helper/LoaderText";
 
-  if (user.loading) return <LoaderPage />;
+export default function TopDashBoard({ children }) {
+  const auth = useAuth();
 
-  if (user.error) throw Error("Unauthorized Access", { status: 403 });
+  if (auth.loading) return <LoaderText clr="text-orange-600" />;
+
+  if (!auth.currentUser) return null;
+
+  const { photoURL, displayName, email } = auth.currentUser;
+
   return (
     <>
       <h2 className="text-2xl font-medium">Profile</h2>
 
-      <div className="rounded bg-gradient-to-r gap-x-[4rem] flex p-5 shadow from-orange-500 to-orange-400 w-4/5">
-        <div>
+      <div className="rounded bg-gradient-to-r gap-x-[4rem] md:gap-y-[1rem] gap-y-[2rem] md:gap-x-[2rem] md:flex grid grid-rows-2 grid-cols-2 p-5 shadow from-orange-500 to-orange-400 md:w-4/5  w-full">
+        <div className="col-span-2">
           <Image
             className="block m-auto rounded-[50%]"
             unoptimized
@@ -33,8 +30,7 @@ export default function TopDashBoard() {
             alt="PROFILE image"
           />
         </div>
-
-        <div className="text-white">
+        <div className="text-white w-full ">
           <article>
             <h1 className="font-bold">Name</h1>
             <p>{displayName ? displayName : "...."}</p>
@@ -44,24 +40,8 @@ export default function TopDashBoard() {
             <p>{email ? email : "...."}</p>
           </article>
         </div>
-        <Suspense fallback={<LoaderText />}>
-          <SideDashboard uid={uid} />
-        </Suspense>
+        {children}
       </div>
-      {/*     <div className="my-4 flex gap-4">
-        <button
-          onClick={() => router.push(`/overview/profile?id=${uid}`)}
-          className="filled_small_btn_orange bg-orange-300"
-        >
-          Edit Profile
-        </button>
-        <button
-          onClick={() => router.push(`/overview/history?id=${uid}`)}
-          className="filled_small_btn_orange bg-orange-300"
-        >
-          Check History
-        </button>
-      </div>*/}
     </>
   );
 }

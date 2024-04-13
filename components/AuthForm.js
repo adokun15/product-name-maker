@@ -1,7 +1,6 @@
 "use client";
 import { getApp } from "firebase/app";
-import { app } from "@/utils/firebase";
-import { GoogleAuthProvider, getAuth, signInWithPopup } from "firebase/auth";
+import { app, auth, provider } from "@/firebase/client";
 
 import { useEffect, useState } from "react";
 import Card from "./Card";
@@ -10,9 +9,10 @@ import Image from "next/image";
 import GoogleIcon from "../public/icons/icons8-google-48.png";
 //import { AuthContext } from "../utils/Provider/AuthProvider";
 
-import { redirect, useRouter } from "next/navigation";
-import { SignUpWithEmailAndPassWord } from "@/utils/Auth/SignUpWithEmailAndPassword";
-import { SignInWithEmailAndPassWord } from "@/utils/Auth/SignInWithEmailAndPassword";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/utils/Provider/AuthProvider";
+import { signInWithRedirect } from "firebase/auth";
+//import { CreateUser } from "@/actions/user/create";
 
 export const SignInForm = ({
   submitForm,
@@ -22,6 +22,8 @@ export const SignInForm = ({
   isLoading,
   password,
   inputError,
+  handleGoogle,
+  mobilegoogleLogin,
 }) => {
   return (
     <form className="my-5 w-[90%] m-auto" onSubmit={submitForm}>
@@ -56,6 +58,34 @@ export const SignInForm = ({
       <button className="filled_large_btn_black w-full block px-1 focus:bg-slate-700 focus:text-white hover:text-black">
         {isLoading ? "loading..." : "Submit"}
       </button>
+      <button
+        type="button"
+        onClick={handleGoogle}
+        className="outline_large_btn_black w-full mt-5 hidden md:block px-1 hover:bg-white hover:text-black"
+      >
+        <Image
+          className="m-auto inline mr-2"
+          src={GoogleIcon}
+          alt="google icon"
+          height={20}
+          width={20}
+        />
+        <span>Sign in with Google</span>
+      </button>
+      <button
+        type="button"
+        onClick={mobilegoogleLogin}
+        className="md:hidden block outline_large_btn_black w-full mt-5  px-1 hover:bg-white hover:text-black"
+      >
+        <Image
+          className="m-auto inline mr-2"
+          src={GoogleIcon}
+          alt="google icon"
+          height={20}
+          width={20}
+        />
+        <span>Sign in with Google</span>
+      </button>
     </form>
   );
 };
@@ -63,11 +93,16 @@ export const SignInForm = ({
 const AuthForm = () => {
   // const { currentUser, SignInGoogle } = useContext(AuthContext);
 
+  const user = useAuth();
+
   const router = useRouter();
 
   const [login, setLogin] = useState(false);
 
+  //ui
   const [isLoading, setIsLoading] = useState(false);
+  const [isErrorFromForm, setFormError] = useState("");
+
   const [enteredValue, setEnteredValue] = useState({
     email: "",
     username: "",
@@ -140,73 +175,61 @@ const AuthForm = () => {
       if (!login) {
         if (usernameIsInvalid || enteredValue.username === "") return;
         setIsLoading(true);
-        await SignUpWithEmailAndPassWord(
+        const data = await user.signUpEmail(
           enteredValue.email,
           enteredValue.password,
           enteredValue.username
         );
         setIsLoading(false);
-        router.push("/overview");
+        router.push(`/overview/${data}`);
       } else {
         setIsLoading(true);
-        await SignInWithEmailAndPassWord(
+        const data = await user.signInEmail(
           enteredValue.email,
           enteredValue.password
         );
+        //console.log(data);
         setIsLoading(false);
-        router.push("/overview");
+        router.push(`/overview/${data}`);
       }
     } catch (err) {
-      console.log(err);
+      setFormError(err?.message);
       setIsLoading(false);
     }
   };
 
   const handleGoogleLogin = async () => {
-    /*  try {
-      const googleData = await fetch("api/auth/googleAuth", { method: "POST" });
-      console.log(googleData.json());
-    } catch (err) {
-      console.log(err);
-    }
-*/
-    const otherapp = getApp();
-    const auth = getAuth();
     try {
-      const Googleprovider = new GoogleAuthProvider();
+      const userId = await user.SignInGoogle();
+      router.push(`/overview/${userId}`);
+    } catch (err) {
+      alert(err?.message);
+    }
+  };
 
-      const result = await signInWithPopup(auth, Googleprovider);
-
-      //wait getRedirectResult(auth);
-      /*
-      if (result) {
-        const user = result.user;
-        const credential = provider.credentialFromResult(auth, result);
-        const token = credential.accessToken;
-      }
-      const operationType = result.operationType;
-*/
-      console.log(result);
-    } catch (error) {
-      console.log(error);
-      /*
-      const errorCode = error.code;
-      const errorMessage = error.message;
-      return new Error({ message: errorMessage || errorCode }, { status: 500 });
-      */
+  const handleGoogleLoginMobile = async () => {
+    try {
+      signInWithRedirect(auth, provider);
+    } catch (err) {
+      alert(err?.message);
     }
   };
   return (
-    <Card className="mt-[4rem]">
+    <Card className="md:mt-[4rem]">
       <h1 className="text-3xl">
         {login ? "Login to your Account" : "Create an account to get Started"}
       </h1>
+      <p className="text-red-600 font-bold">
+        {isErrorFromForm ? isErrorFromForm : ""}
+      </p>
       <>
         {login && (
           <SignInForm
             isLoading={isLoading}
+            handleGoogle={handleGoogleLogin}
             submitForm={handleSubmit}
             email={enteredValue.email}
+            mobilegoogleLogin={handleGoogleLoginMobile}
             onchangeInput={handleInputChange}
             password={enteredValue.password}
             handleBlurInput={handleInputEdit}
@@ -272,7 +295,21 @@ const AuthForm = () => {
             <button
               type="button"
               onClick={handleGoogleLogin}
-              className="outline_large_btn_black w-full mt-5 block px-1 hover:bg-white hover:text-black"
+              className="md:block hidden outline_large_btn_black w-full mt-5  px-1 hover:bg-white hover:text-black"
+            >
+              <Image
+                className="m-auto inline mr-2"
+                src={GoogleIcon}
+                alt="google icon"
+                height={20}
+                width={20}
+              />
+              <span>Sign in with Google</span>
+            </button>
+            <button
+              type="button"
+              onClick={handleGoogleLoginMobile}
+              className="md:hidden block outline_large_btn_black w-full mt-5  px-1 hover:bg-white hover:text-black"
             >
               <Image
                 className="m-auto inline mr-2"
@@ -304,7 +341,7 @@ export default AuthForm;
  * 
  * 
  *   try {
-          const fetchData = await fetch("api/auth/signUser", {
+          const fetchData = await fetch("api/user/signUser", {
             method: "POST",
             body: JSON.stringify({
               type: "signup",
@@ -330,7 +367,7 @@ export default AuthForm;
         
         
         try {
-          const fetchData = await fetch("api/auth/signUser", {
+          const fetchData = await fetch("api/user/signUser", {
             method: "POST",
             body: JSON.stringify({
               type: "signup",

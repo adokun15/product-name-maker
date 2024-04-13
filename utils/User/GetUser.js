@@ -1,48 +1,31 @@
+"use server";
 import { getApp } from "firebase/app";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { getDoc, doc } from "firebase/firestore";
-import { app, db } from "../firebase";
-import { NextResponse } from "next/server";
+import { app, db } from "@/firebase/client";
 
 export async function userDatabase(id, path = "users") {
-  if (!id) return null;
+  if (!id) {
+    return { error: true, message: "unauthorized access!", status: 401 };
+  }
 
   try {
     const docRef = doc(db, path, id);
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
-      return { ...docSnap.data() };
+      return { error: false, ...docSnap.data() };
     }
     if (!docSnap.exists()) {
-      throw new Error(`This User document is Not Available`, {
-        status: 404,
-      });
+      return {
+        error: true,
+        message: `No ${path === "users" ? "user" : path} created yet`,
+        status: 403,
+      };
     }
   } catch (err) {
-    // console.log(err);
-    throw new Error(err, { status: err?.status || 500 });
-  }
-}
-
-export async function GetUser() {
-  try {
-    const otherApp = getApp();
-    const auth = getAuth();
-
-    let cUser = null;
-
-    onAuthStateChanged(auth, (user) => {
-      cUser = user;
-    });
-
-    //const otherDb = await userDatabase();
-
-    //if (!otherDb) return null;
-    //const { email, displayName, emailVerified, uid, photoURL } = otherDb;
-
-    return cUser;
-  } catch (err) {
-    throw new Error({ message: err.code || err.message }, { status: 500 });
+    if (err?.code === "unavailable") {
+      return { error: true, message: "No Internet Connection ", status: 502 };
+    }
+    return { error: true, message: err?.message, status: 500 };
   }
 }

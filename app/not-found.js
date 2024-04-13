@@ -1,5 +1,7 @@
 "use client";
-export default function NotFound({ error }) {
-  console.log(error);
-  return <p>Page Not Found</p>;
+
+import ServerErrorPage from "@/components/ServerErrorPage";
+
+export default function NotFound() {
+  return <ServerErrorPage status={404} message="This Page is not found" />;
 }

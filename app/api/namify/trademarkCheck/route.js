@@ -1,29 +1,24 @@
-import { NameValidator } from "@/utils/OpenAi/nameValidityCheck";
+import { TradeMarkNameValidator } from "@/utils/OpenAi/nameValidityCheck";
 import { NextResponse } from "next/server";
 
 export async function POST(req) {
   try {
-    const { prompt, userId } = await req.json();
-
-    const freeTrial = await CheckAiLimit(userId);
-
-    //check subsc
-    if (freeTrial) {
-      return new NextResponse("You Don't have Access To this Service!", {
-        status: 403,
-      });
-    }
+    const { prompt } = await req.json();
 
     //check and validate token
-    if (!prompt) {
+    if (!prompt || prompt === "") {
       return new NextResponse("Prompt texts is Emoty!", { status: 500 });
     }
 
-    const data = await NameValidator(prompt);
+    const data = await TradeMarkNameValidator(prompt);
+
+    if (!data) {
+      throw new Response({ message: "Something went wrong" }, { status: 500 });
+    }
 
     //return result
-    return new Response(JSON.stringify({ ...data }));
+    return new NextResponse(JSON.stringify({ ...data }));
   } catch (err) {
-    console.log(err);
+    throw new Error(err?.message);
   }
 }

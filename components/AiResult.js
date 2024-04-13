@@ -4,16 +4,16 @@ import React from "react";
 import WhiteCard from "./whiteCard";
 
 const AiResult = ({ result, error }) => {
-  const updateError = error.message.includes("client is offline")
+  const updateError = error?.includes("unavailable")
     ? "No Internet Connection"
-    : error.message;
+    : "Could not complete AI request!";
 
   if (!error && !result?.message) {
     return null;
   }
 
   return (
-    <div className="w-[30%] my-5 px-3 rounded  ">
+    <div className="md:w-fit w-[90%] mx-auto md:mx-0 my-5 px-3 rounded  ">
       <WhiteCard>
         <header className="font-bold text-xl capitalize mb-4">
           {error ? "Something went wrong" : "Namify AI"}

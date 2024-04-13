@@ -1,7 +1,7 @@
 import { getApp } from "firebase/app";
 import { getAuth, updateProfile, updateEmail } from "firebase/auth";
 import { doc, setDoc, updateDoc } from "firebase/firestore";
-import { db } from "../firebase";
+import { db } from "@/firebase/client";
 import { userDatabase } from "./GetUser";
 
 export async function UpdateUserAiCount(id, value) {
@@ -35,7 +35,7 @@ export async function UpdateUserHistory(id, value) {
   });
 }
 
-export async function UpdateUserProfile(username, id, data) {
+export async function UpdateUserProfile(username) {
   const app = getApp();
   const auth = getAuth();
 
@@ -66,18 +66,14 @@ export async function UpdateUserEmail() {
     });
 }
 
-export async function UpdateUserPassWord() {
-  const auth = getAuth();
-
-  const user = auth.currentUser;
-  const newPassword = getASecureRandomPassword();
-
-  updatePassword(user, newPassword)
-    .then(() => {
-      // Update successful.
-    })
-    .catch((error) => {
-      // An error ocurred
-      // ...
-    });
+export async function UpdateUserDatabase(id = "", path = "", data = {}) {
+  if (!id || !path || !data) return;
+  try {
+    await updateDoc(doc(db, path, id), data);
+    return `${path} database has been updated`;
+  } catch (error) {
+    const errorCode = error.code;
+    const errorMessage = error.message;
+    return new Error(JSON.stringify({ message: errorMessage || errorCode }));
+  }
 }

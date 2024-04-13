@@ -3,17 +3,16 @@ import Image from "next/image";
 import LogoImg from "../public/icons/icons8-pen-32.png";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
-import { useUser } from "@/hook/useUser";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars } from "@fortawesome/free-solid-svg-icons";
+import { useAuth } from "@/utils/Provider/AuthProvider";
 
 export function NavLink() {
   const pathname = usePathname();
   const router = useRouter();
 
-  const user = useUser();
+  const user = useAuth();
 
   return (
     <div className="flex gap-6 items-center">
@@ -50,7 +49,7 @@ export function NavLink() {
           {" "}
           Pricing
         </Link>
-        {!user?.cUser?.uid ? (
+        {!user.currentUser?.uid ? (
           <button
             className="filled_large_btn_black"
             onClick={() => {
@@ -63,7 +62,7 @@ export function NavLink() {
           <button
             className="filled_large_btn_black"
             onClick={() => {
-              router.push("/overview");
+              router.push(`/overview/${user?.currentUser.uid}`);
             }}
           >
             Dashboard
@@ -76,7 +75,7 @@ export function NavLink() {
 
 export default function NavBar() {
   return (
-    <nav className="flex top-0 justify-between fixed w-full bg-[rgba(255,255,255,0.8)] items-center md:px-[4rem] px-8 md:py-6 py-3">
+    <nav className="flex top-0 justify-between fixed w-full bg-[rgba(255,255,255,0.94)] z-[100] items-center md:px-[4rem] px-8 md:py-6 py-3">
       <Link href="/">
         <div className="flex items-center">
           <Image
@@ -93,9 +92,9 @@ export default function NavBar() {
         <NavLink />
       </div>
 
-      <div className="md:hidden block">
+      <button className="md:hidden block">
         <FontAwesomeIcon className="text-2xl" icon={faBars} />
-      </div>
+      </button>
     </nav>
   );
 }

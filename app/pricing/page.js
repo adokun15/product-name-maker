@@ -1,5 +1,6 @@
 import Card from "@/components/Card";
 import NavBar from "@/components/NavBar";
+import NewsLetter from "@/components/NewsLetter";
 import Spacer from "@/components/spacer";
 import WhiteCard from "@/components/whiteCard";
 import { faCircleCheck } from "@fortawesome/free-solid-svg-icons";
@@ -65,6 +66,7 @@ const Pricing = () => {
           </WhiteCard>
         </div>
       </div>
+      <NewsLetter />
     </>
   );
 };

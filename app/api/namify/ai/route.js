@@ -13,7 +13,7 @@ export async function POST(req) {
     //Get Current User From FireBase Auth,
 
     if (!userId) {
-      return new Response("Unauthorized", { status: 401 });
+      return new Response("Unauthorized Access", { status: 401 });
     }
 
     //Check If user is on Free Trial
@@ -41,8 +41,9 @@ export async function POST(req) {
 
     const data = await NameGenerator(prompt);
 
-    if (!data) {
-      return new Response("Could not complete AI request", { status: 403 });
+    if (!data || data?.error) {
+      console.log(data?.message);
+      throw new Error("Could not Complete AI request!");
     }
 
     //const tokenUsed = data.usage.totalToken;
@@ -66,8 +67,7 @@ export async function POST(req) {
     // console.log(data);
     return new Response(JSON.stringify({ ...data }));
   } catch (err) {
-    console.log("[AI GENERATED ERROR:]", err);
-
-    throw new Error(err);
+    console.log(err);
+    throw new Error(err?.message);
   }
 }

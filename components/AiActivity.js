@@ -6,68 +6,14 @@ import {
   faStopwatch,
 } from "@fortawesome/free-solid-svg-icons";
 import { userDatabase } from "@/utils/User/GetUser";
-/*
-async function HistoryTest(id) {
-  const promise = new Promise((resolve) => {
-    setTimeout(() => {
-      resolve([
-        {
-          service: "Brand naming",
-          id: 1,
-          Timestamp: () => {
-            const currentDate = new Date();
-            currentDate.setHours(Math.trunc(Math.random() * 24));
-            currentDate.setMinutes(Math.random() * 60);
-            return currentDate;
-          },
-          tokenUsed: 20,
-        },
-        {
-          service: "product naming",
-          id: 2,
-          Timestamp: () => {
-            const currentDate = new Date();
-            currentDate.setHours(Math.trunc(Math.random() * 24));
-            currentDate.setMinutes(Math.random() * 60);
-            return currentDate;
-          },
-          tokenUsed: 49,
-        },
-        {
-          service: "character naming",
-          id: 3,
-          Timestamp: () => {
-            const currentDate = new Date();
-            currentDate.setHours(Math.trunc(Math.random() * 24));
-            currentDate.setMinutes(Math.random() * 60);
-            return currentDate;
-          },
-          tokenUsed: 10,
-        },
-        {
-          service: "start naming",
-          id: 4,
-          Timestamp: () => {
-            const currentDate = new Date();
-            currentDate.setHours(Math.trunc(Math.random() * 24));
-            currentDate.setMinutes(Math.random() * 60);
-            return currentDate;
-          },
-          tokenUsed: 54,
-        },
-      ]);
-    }, 3000);
-  });
-  return promise;
-}
-*/
-const TokenUsage = (list) => {
-  if (!list) return null;
+
+const TokenUsage = (list = []) => {
+  if (!list || list.length === 0) return null;
   return list?.reduce((acc, token) => token?.usage?.totalToken + acc, 0);
 };
 
-const recentService = (list) => {
-  if (!list) return null;
+const recentService = (list = []) => {
+  if (!list || list.length === 0) return null;
 
   let temp = {};
 
@@ -86,7 +32,7 @@ const recentService = (list) => {
 };
 
 const mostUsed = (list = []) => {
-  if (!list) return null;
+  if (!list || list.length === 0) return null;
 
   let temp = {};
 
@@ -113,8 +59,7 @@ async function HistoryLoad(id, path) {
     return user;
   } catch (err) {
     if (err.message.includes("client is offline")) {
-      return { error: true, errorMesage: "No Internet Connection" };
-    } else if (err.message.includes("User document is Not Available")) {
+    } else if (err?.message?.includes("User document is Not Available")) {
       return { error: true, errorMesage: "Invalid User Error" };
     } else {
       return { error: true, errorMesage: err.message };
@@ -122,43 +67,56 @@ async function HistoryLoad(id, path) {
   }
 }
 
-export default async function AiActivity({ id }) {
-  const listItems = await HistoryLoad(id, "history");
+export default async function AiActivity({ uid }) {
+  const listItems = await HistoryLoad(uid, "history");
 
-  if (!listItems || listItems.error)
-    return <p>{listItems?.errorMesage || "Something Went Wrong"}</p>;
+  if (!listItems || listItems?.error)
+    return (
+      <WhiteCard cls=" my-10 bg-white block md:w-4/5 w-full  px-[2rem]">
+        <p>
+          {listItems?.errorMesage ||
+            "Something Went Wrong loading Ai Activities"}
+        </p>
+      </WhiteCard>
+    );
 
   const list = listItems?.history;
 
   if (!list) return null;
+
   return (
-    <WhiteCard cls=" gap-2 text-white  my-10 bg-white flex w-4/5 px-[2rem]">
-      <article className="leading-[2.7rem]   p-4 rounded text-xl bg-orange-600">
-        <p className="font-bold text-xl ">
-          <span className="mr-2">Token Usage</span>
-          <FontAwesomeIcon icon={faCoins} />
-        </p>
-        <p
-          className="font-serif italic text-[16px]
+    <>
+      <h2 className="text-2xl font-medium mb-4">Ai Activity</h2>
+      <WhiteCard cls=" gap-2 text-white  my-10 bg-white md:flex block md:w-4/5 w-full *:mb-4 px-[2rem]">
+        <article className="leading-[2.7rem]   p-4 rounded text-xl bg-orange-600">
+          <p className="font-bold text-xl ">
+            <span className="mr-2">Token Usage</span>
+            <FontAwesomeIcon icon={faCoins} />
+          </p>
+          <p
+            className="font-serif italic text-[16px]
     "
-        >
-          {TokenUsage(list)}
-        </p>
-      </article>
-      <article className="leading-[2rem] text-xl  p-4 rounded bg-orange-500">
-        <p className="font-bold text-xl">
-          <span className="mr-2">Most Recent Service</span>
-          <FontAwesomeIcon icon={faStopwatch} />
-        </p>
-        <p className="font-serif italic text-[16px]">{recentService(list)}</p>
-      </article>
-      <article className="leading-[2rem] text-xl  p-4 rounded bg-orange-600">
-        <p className="font-bold text-xl">
-          <span className="mr-1">Most Used Service</span>
-          <FontAwesomeIcon icon={faBattery2} className="rotate-[-90deg]" />
-        </p>
-        <p className="font-serif italic text-[16px]">{mostUsed(list)}</p>
-      </article>
-    </WhiteCard>
+          >
+            {TokenUsage(list) || 0}
+          </p>
+        </article>
+        <article className="leading-[2rem] text-xl  p-4 rounded bg-orange-500">
+          <p className="font-bold text-xl">
+            <span className="mr-2">Most Recent Service</span>
+            <FontAwesomeIcon icon={faStopwatch} />
+          </p>
+          <p className="font-serif italic text-[16px]">
+            {recentService(list) || 0}
+          </p>
+        </article>
+        <article className="leading-[2rem] text-xl  p-4 rounded bg-orange-600">
+          <p className="font-bold text-xl">
+            <span className="mr-1">Most Used Service</span>
+            <FontAwesomeIcon icon={faBattery2} className="rotate-[-90deg]" />
+          </p>
+          <p className="font-serif italic text-[16px]">{mostUsed(list) || 0}</p>
+        </article>
+      </WhiteCard>
+    </>
   );
 }
