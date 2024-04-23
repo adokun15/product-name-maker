@@ -5,10 +5,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faX } from "@fortawesome/free-solid-svg-icons";
 import { useRouter } from "next/navigation";
 
-const WhiteBackGround = ({ children, routerBack, removeCard }) => {
+const WhiteBackGround = ({ children, routerBack }) => {
   return (
     <WhiteCard
-      cls={`absolute bg-white z-[1200] h-fit w-3/5 left-[20%] py-5 top-[5%] my-[1rem] `}
+      cls={`absolute w-[90%] bg-white z-[1200] h-fit md:w-3/5 md:left-[20%]  left-[5%] py-5 top-[5%] my-[1rem] `}
     >
       <button onClick={routerBack} className="font-medium">
         <FontAwesomeIcon icon={faX} className="text-black" />
@@ -20,7 +20,7 @@ const WhiteBackGround = ({ children, routerBack, removeCard }) => {
 const NonwhiteBackGround = ({ children, routerBack }) => {
   return (
     <WhiteCard
-      cls={`absolute z-[1200] h-fit w-3/5 left-[20%] py-5 top-[5%] my-[1rem] `}
+      cls={`absolute w-[90%] z-[1200] h-fit md:w-3/5 md:left-[20%]  left-[5%] py-5 top-[5%] my-[1rem] `}
     >
       <button onClick={routerBack} className="font-medium">
         <FontAwesomeIcon icon={faX} className={"text-white"} />

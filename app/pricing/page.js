@@ -1,4 +1,5 @@
 import Card from "@/components/Card";
+import HomeModal from "@/components/ModalHome";
 import NavBar from "@/components/NavBar";
 import NewsLetter from "@/components/NewsLetter";
 import Spacer from "@/components/spacer";
@@ -24,6 +25,7 @@ const Pricing = () => {
 
   return (
     <>
+      <HomeModal />
       <NavBar />
       <Spacer />
       <div className="mb-6">
@@ -34,8 +36,8 @@ const Pricing = () => {
           Plans that best suit your business requirements
         </p>
 
-        <div className="flex w-[82%] gap-[4rem] m-auto">
-          <WhiteCard cls="bg-white  w-[100%]">
+        <div className="md:flex block w-[82%] gap-[4rem] m-auto">
+          <WhiteCard cls="bg-white mb-4 w-[100%] m-auto ">
             <h1 className="text-4xl font-bold text-orange-600">Free Plan</h1>
             <p className="italic opacity-75 text-[17px] my-8">
               Enjoy all the free service for one week which includes:
@@ -49,7 +51,7 @@ const Pricing = () => {
               ))}
             </ul>
           </WhiteCard>
-          <WhiteCard cls="bg-white  w-[100%]">
+          <WhiteCard cls="bg-white mb-4 w-[100%] m-auto ">
             <h1 className="text-4xl font-bold text-orange-600">Pro Plan</h1>
 
             <p className="italic opacity-75 text-[17px] my-8">

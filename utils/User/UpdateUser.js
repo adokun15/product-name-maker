@@ -1,3 +1,4 @@
+"use server";
 import { getApp } from "firebase/app";
 import { getAuth, updateProfile, updateEmail } from "firebase/auth";
 import { doc, setDoc, updateDoc } from "firebase/firestore";
@@ -35,13 +36,12 @@ export async function UpdateUserHistory(id, value) {
   });
 }
 
-export async function UpdateUserProfile(username) {
+export async function UpdateUserName(username) {
   const app = getApp();
   const auth = getAuth();
 
   await updateProfile(auth.currentUser, {
     displayName: username,
-    // photoURL: "https://example.com/jane-q-user/profile.jpg",
   })
     .then(() => {
       return "Username has been Updated!";
@@ -50,19 +50,6 @@ export async function UpdateUserProfile(username) {
       const errorCode = error.code;
       const errorMessage = error.message;
       return new Error({ message: errorMessage || errorCode }, { status: 500 });
-    });
-}
-
-export async function UpdateUserEmail() {
-  const auth = getAuth();
-  updateEmail(auth.currentUser, "user@example.com")
-    .then(() => {
-      // Email updated!
-      // ...
-    })
-    .catch((error) => {
-      // An error occurred
-      // ...
     });
 }
 

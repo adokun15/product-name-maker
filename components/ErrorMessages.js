@@ -1,25 +1,39 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function ErrorMessage({ message }) {
-  const [error_type, setErrorType] = useState();
+  const [error_type, setErrorType] = useState("");
 
-  switch (message) {
-    case "unavailable":
-      setErrorType("You have bad Internet Connect");
-      break;
+  useEffect(() => {
+    if (
+      message === "unavailable" ||
+      message === "auth/network-request-failed"
+    ) {
+      setErrorType("You have bad Internet Connection");
+    }
 
-    case "auth/popup-cancelled":
+    if (message === "auth/popup-cancelled") {
       setErrorType("Google Pop-up was Cancelled!");
-      break;
+    }
 
-    case "auth/user-not-found":
+    if (message === "auth/invalid-credential") {
       setErrorType("Invalid Input Credentials");
-      break;
-  }
+    }
+    if (message === "auth/email-already-in-use") {
+      setErrorType("Email already in used. Log in");
+    }
+  }, [message]);
 
   return (
-    <p className="bg-red-300 border-solid border-red-700 rounded border-1">
-      {error_type}
-    </p>
+    <>
+      {(error_type || message) && (
+        <p className="bg-red-300 px-2 py-3 my-3 text-red-600 capitalize font-bold text-[0.9rem] border-solid border-red-700 rounded border-1">
+          {error_type ||
+            message?.split("/")[1] ||
+            message ||
+            message?.message.split("/")[1] ||
+            "Something went wrong"}
+        </p>
+      )}
+    </>
   );
 }

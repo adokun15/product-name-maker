@@ -7,11 +7,13 @@ import {
   signInWithEmailAndPassword,
   signInWithPopup,
   signOut,
+  updateProfile,
 } from "firebase/auth";
 import { createContext, useContext, useEffect, useState } from "react";
 import { auth } from "@/firebase/client";
-import { UpdateUserProfile } from "../User/UpdateUser";
+import { UpdateUserName, UpdateUserProfile } from "../User/UpdateUser";
 import { useRouter } from "next/navigation";
+import { InitializeDb } from "../User/InitializeDb";
 export const AuthContext = createContext(null);
 
 export default function AuthProvider({ children }) {
@@ -29,6 +31,9 @@ export default function AuthProvider({ children }) {
       signInWithPopup(auth, new GoogleAuthProvider())
         .then(async (userCred) => {
           if (!userCred) return;
+
+          //Initialize DB
+          // await InitializeDb(userCred.user.uid)
 
           await fetch("/api/login", {
             method: "POST",
@@ -54,13 +59,13 @@ export default function AuthProvider({ children }) {
       return "Something went wrong while signing out";
     }
 
-    await signOut(auth);
-
-    router.push("/");
     //clear cookies server
     await fetch("/api/signOut", {
       method: "POST",
     });
+
+    await signOut(auth);
+    router.push("/");
   };
 
   const signUpEmail = async (emailStr, password, username) => {
@@ -74,7 +79,15 @@ export default function AuthProvider({ children }) {
           //createExpirationCookies(userCred.stsTokenManger?.expires)
           if (!userCred) return;
 
-          await UpdateUserProfile({ displayName: username });
+          //Create DisplayName
+          if (username) {
+            await UpdateUserName(username);
+          } else {
+            await UpdateUserName(emailStr.split("@")[0]);
+          }
+
+          //Initialize DB
+          await InitializeDb(userCred.user.uid);
 
           await fetch("/api/login", {
             method: "POST",
@@ -113,13 +126,12 @@ export default function AuthProvider({ children }) {
             },
           }).then((res) => {
             if (res.status === 200) {
-              //Get Uid
               resolve(`${userCred.user.uid}`);
             }
           });
         })
         .catch((err) => {
-          reject(`${err.code || err.message}`);
+          reject(err.code || err?.message);
         });
     });
   };

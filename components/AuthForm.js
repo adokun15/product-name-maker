@@ -12,6 +12,8 @@ import GoogleIcon from "../public/icons/icons8-google-48.png";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/utils/Provider/AuthProvider";
 import { signInWithRedirect } from "firebase/auth";
+import ErrorMessage from "./ErrorMessages";
+import LoaderText from "@/app/overview/[uid]/_helper/LoaderText";
 //import { CreateUser } from "@/actions/user/create";
 
 export const SignInForm = ({
@@ -39,7 +41,7 @@ export const SignInForm = ({
       />
 
       <div className="error-text">
-        {inputError.emailIsInvalid && "please a valid email Address"}
+        {inputError.emailIsInvalid && "please enter a valid email Address"}
       </div>
       <p className="font-semibold">Password</p>
       <input
@@ -53,10 +55,10 @@ export const SignInForm = ({
       />
 
       <div className="error-text">
-        {inputError.passwordIsInvalid && "please a valid email Address"}
+        {inputError.passwordIsInvalid && "Invalid password"}
       </div>
       <button className="filled_large_btn_black w-full block px-1 focus:bg-slate-700 focus:text-white hover:text-black">
-        {isLoading ? "loading..." : "Submit"}
+        {isLoading ? <LoaderText clr="text-white" /> : "Submit"}
       </button>
       <button
         type="button"
@@ -90,7 +92,7 @@ export const SignInForm = ({
   );
 };
 
-const AuthForm = () => {
+const AuthForm = ({ redirect_error }) => {
   // const { currentUser, SignInGoogle } = useContext(AuthContext);
 
   const user = useAuth();
@@ -101,7 +103,7 @@ const AuthForm = () => {
 
   //ui
   const [isLoading, setIsLoading] = useState(false);
-  const [isErrorFromForm, setFormError] = useState("");
+  const [isErrorFromForm, setFormError] = useState(null);
 
   const [enteredValue, setEnteredValue] = useState({
     email: "",
@@ -147,7 +149,8 @@ const AuthForm = () => {
       }
     }
     if (enteredValue.username === "") setCheckError(false);
-  }, [enteredValue.username, didEdit.username]);
+    setFormError(redirect_error);
+  }, [enteredValue.username, didEdit.username, redirect_error]);
 
   function handleInputChange(identifier, value) {
     setEnteredValue((prevVal) => ({
@@ -171,57 +174,82 @@ const AuthForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (passwordIsInvalid || emailIsInvalid) return;
-    try {
-      if (!login) {
-        if (usernameIsInvalid || enteredValue.username === "") return;
-        setIsLoading(true);
-        const data = await user.signUpEmail(
+
+    if (!login) {
+      if (usernameIsInvalid || enteredValue.username === "") return;
+      setIsLoading(true);
+      setFormError("");
+      await user
+        .signUpEmail(
           enteredValue.email,
           enteredValue.password,
           enteredValue.username
-        );
-        setIsLoading(false);
-        router.push(`/overview/${data}`);
-      } else {
-        setIsLoading(true);
-        const data = await user.signInEmail(
-          enteredValue.email,
-          enteredValue.password
-        );
-        //console.log(data);
-        setIsLoading(false);
-        router.push(`/overview/${data}`);
-      }
-    } catch (err) {
-      setFormError(err?.message);
-      setIsLoading(false);
+        )
+        .then((data) => {
+          setFormError("");
+          router.push(`/overview/${data}`);
+        })
+        .catch((err) => {
+          setFormError(err);
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
+    } else {
+      setFormError("");
+      setIsLoading(true);
+      await user
+        .signInEmail(enteredValue.email, enteredValue.password)
+        .then((data) => {
+          router.push(`/overview/${data}`);
+          setFormError("");
+        })
+        .catch((err) => {
+          //console.log(err);
+          setFormError(err);
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
     }
   };
 
   const handleGoogleLogin = async () => {
-    try {
-      const userId = await user.SignInGoogle();
-      router.push(`/overview/${userId}`);
-    } catch (err) {
-      alert(err?.message);
-    }
+    setIsLoading(true);
+    setFormError("");
+    await user
+      .SignInGoogle()
+      .then((data) => {
+        setFormError("");
+        router.push(`/overview/${data}`);
+      })
+      .catch((err) => {
+        setFormError(err);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   };
 
   const handleGoogleLoginMobile = async () => {
-    try {
-      signInWithRedirect(auth, provider);
-    } catch (err) {
-      alert(err?.message);
-    }
+    setFormError("");
+    await signInWithRedirect(auth, provider)
+      .then(() => {
+        setFormError("");
+      })
+      .catch((err) => {
+        setFormError(err?.message || err?.code);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   };
   return (
     <Card className="md:mt-[4rem]">
       <h1 className="text-3xl">
         {login ? "Login to your Account" : "Create an account to get Started"}
       </h1>
-      <p className="text-red-600 font-bold">
-        {isErrorFromForm ? isErrorFromForm : ""}
-      </p>
+      <ErrorMessage message={isErrorFromForm} />
       <>
         {login && (
           <SignInForm
@@ -270,7 +298,7 @@ const AuthForm = () => {
               px-3 py-4 focus:filter transition-all outline-gray-400"
             />
             <div className="error-text">
-              {emailIsInvalid && "please a valid email Address"}
+              {emailIsInvalid && "please enter a valid email Address"}
             </div>
 
             <p className="font-semibold">Password</p>
@@ -287,10 +315,10 @@ const AuthForm = () => {
             />
 
             <div className="error-text">
-              {passwordIsInvalid && "password too short"}
+              {passwordIsInvalid && "Password length is too short"}
             </div>
             <button className="filled_large_btn_black w-full block px-1 focus:bg-slate-700 focus:text-white hover:text-black">
-              {isLoading ? "loading..." : "Submit"}
+              {isLoading ? <LoaderText clr="text-white" /> : "Submit"}
             </button>
             <button
               type="button"
@@ -325,7 +353,10 @@ const AuthForm = () => {
       </>
       <button
         className="pl-8 mt-2 underline"
-        onClick={() => setLogin((p) => !p)}
+        onClick={() => {
+          setFormError("");
+          setLogin((p) => !p);
+        }}
       >
         {login ? "Click here.. to Register" : "Click here..to login"}
       </button>
@@ -334,60 +365,3 @@ const AuthForm = () => {
 };
 
 export default AuthForm;
-
-/**
- * 
- * 
- * 
- * 
- *   try {
-          const fetchData = await fetch("api/user/signUser", {
-            method: "POST",
-            body: JSON.stringify({
-              type: "signup",
-              email: enteredValue.email,
-              password: enteredValue.password,
-              username: enteredValue.username,
-            }),
-          });
-
-          if (!fetchData.ok) return;
-
-          const response = await fetchData.json();
-
-          setIsLoading(false);
-          //  redirect("/overview");
-
-          router.push("/overview");
-        } catch (err) {
-          setIsLoading(false);
-        } finally {
-          router.refresh();
-        }
-        
-        
-        try {
-          const fetchData = await fetch("api/user/signUser", {
-            method: "POST",
-            body: JSON.stringify({
-              type: "signup",
-              email: enteredValue.email,
-              password: enteredValue.password,
-              username: enteredValue.username,
-            }),
-          });
-
-          if (!fetchData.ok) return;
-
-          const response = await fetchData.json();
-
-          setIsLoading(false);
-          //  redirect("/overview");
-
-          router.push("/overview");
-        } catch (err) {
-          setIsLoading(false);
-        } finally {
-          router.refresh();
-        }
- */

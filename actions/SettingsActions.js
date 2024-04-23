@@ -77,6 +77,7 @@ export async function UpdateAi(uid, settings, data) {
 
     if (settings === "theme" && data && uid) {
       const update_ai = await UpdateUserDatabase(uid, "users", {
+        //ai_theme: { ai_theme_color, ai_font_style, ai_font_size}
         ai_theme: { ...data },
       });
       console.log("SuccessFully Updated Ai Theme", update_ai);

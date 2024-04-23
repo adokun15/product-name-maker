@@ -19,8 +19,8 @@ export async function POST(req) {
     //Check If user is on Free Trial
     const freeTrial = await AiLimitReached(userId);
 
-    if (!freeTrial) {
-      return new Response("Your Free Trial has ended!", { status: 403 });
+    if (freeTrial) {
+      return new Response("Your token has been exhausted", { status: 403 });
     }
 
     //check user Input value
@@ -31,7 +31,6 @@ export async function POST(req) {
     //Calculate Token
     const CheckExceeded = await TokenExceeded(prompt, token_left);
 
-    //console.log(CheckExceeded);
     if (!CheckExceeded) {
       return new Response(
         "Your remaining token is not enough to complete the request",
@@ -39,10 +38,10 @@ export async function POST(req) {
       );
     }
 
-    const data = await NameGenerator(prompt);
+    let ispro = token_left === "EXPIRED";
+    const data = await NameGenerator(prompt, ispro);
 
     if (!data || data?.error) {
-      console.log(data?.message);
       throw new Error("Could not Complete AI request!");
     }
 
@@ -52,7 +51,6 @@ export async function POST(req) {
     //Increase Ai Limit
     await DecreaseAiLimit(userId, tokenUsed);
 
-    // return result
     // update: HISTORY
     const date = new Date();
     const nowDate = date.toISOString();
@@ -64,10 +62,9 @@ export async function POST(req) {
       service,
       usage: data.usage,
     });
-    // console.log(data);
+
     return new Response(JSON.stringify({ ...data }));
   } catch (err) {
-    console.log(err);
     throw new Error(err?.message);
   }
 }

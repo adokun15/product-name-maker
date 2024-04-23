@@ -5,8 +5,6 @@ import { userDatabase } from "@/utils/User/GetUser";
 export default async function Notification({ params }) {
   const notification = await userDatabase(params.uid, "notifications");
 
-  console.log(notification);
-
   if (notification.error && notification.status === 403) {
     <div>
       <h1 className="text-5xl mb-6 text-orange-700 ml-4">Notifications</h1>
@@ -14,7 +12,7 @@ export default async function Notification({ params }) {
     </div>;
   }
 
-  if (notification.error) {
+  if (notification.error && notification.length !== 0) {
     return (
       <ServerErrorPage
         status={notification?.status}
@@ -26,7 +24,10 @@ export default async function Notification({ params }) {
   return (
     <div>
       <h1 className="text-5xl mb-6 text-orange-700 ml-4">Notifications</h1>
-      <NotificationList notifications={notification?.notifications} />
+      <NotificationList
+        notifications={notification?.notifications}
+        id={notification?.userId}
+      />
     </div>
   );
 }

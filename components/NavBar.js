@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars } from "@fortawesome/free-solid-svg-icons";
 import { useAuth } from "@/utils/Provider/AuthProvider";
+import { useModal } from "@/utils/Provider/ModalProvider";
 
 export function NavLink() {
   const pathname = usePathname();
@@ -74,6 +75,8 @@ export function NavLink() {
 }
 
 export default function NavBar() {
+  const { toggleHomeModal } = useModal();
+
   return (
     <nav className="flex top-0 justify-between fixed w-full bg-[rgba(255,255,255,0.94)] z-[100] items-center md:px-[4rem] px-8 md:py-6 py-3">
       <Link href="/">
@@ -92,7 +95,7 @@ export default function NavBar() {
         <NavLink />
       </div>
 
-      <button className="md:hidden block">
+      <button className="md:hidden block" onClick={toggleHomeModal}>
         <FontAwesomeIcon className="text-2xl" icon={faBars} />
       </button>
     </nav>

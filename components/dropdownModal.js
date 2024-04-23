@@ -23,17 +23,12 @@ export default function ModalDropDown({ ispro }) {
 
   const logout = async () => {
     //Log out from FIREBASE
-    try {
-      await user.SignOut();
-    } catch (E) {
-      console.log(E);
-      alert("Could not sign Out");
-    }
+    router.push(`/overview/logout`);
   };
   return (
     <>
       {dropDownModal && (
-        <WhiteCard cls="*:block *:mb-4 left-[55%]  w-[38%]  md:left-[78%] top-[4rem] md:w-[21%] z-[1000] absolute bg-white">
+        <WhiteCard cls="*:block *:mb-4 left-[33%]  w-[60%]  md:left-[78%] md:top-[4rem] top-[4.5rem] md:w-[21%] z-[1000] absolute bg-white">
           <button onClick={() => redirectButton("profile")}>
             Edit Profile
           </button>

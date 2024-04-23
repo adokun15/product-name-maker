@@ -65,10 +65,13 @@ export const ModalInfo = () => {
         <>
           <div
             onClick={toggleModalInfo}
-            className="fixed z-[1190] h-[100vh] bg-[rgba(0,0,0,0.5)]  top-0 w-full"
+            className="backdrop-blur-lg fixed z-[1190] h-[100vh] bg-[rgba(0,0,0,0.5)]  top-0 w-full"
           ></div>
 
-          <WhiteCard cls="bg-white absolute z-[1200] left-[50%]">
+          <WhiteCard
+            cls={`fixed z-[1200] h-fit w-[90%] md:w-[70%] left-[15%] py-5 top-[0%] md:top-[5%] my-[1rem] bg-white m-auto `}
+          >
+            {" "}
             {formCred && action && !message && (
               <FormResponse
                 action={action}

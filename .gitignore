@@ -39,3 +39,5 @@ next-env.d.ts
 
 
 /firebase/serverKey.json
+/lib
+/User/InitializeDb.js

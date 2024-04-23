@@ -15,7 +15,7 @@ export default function Overview() {
   if (currentUser?.uid) {
     router.push(`/overview/${currentUser?.uid}`);
   } else {
-    router.push(`/auth`);
+    router.push(`/overview/logout`);
   }
   return <></>;
 }

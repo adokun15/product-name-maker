@@ -2,7 +2,7 @@
 
 import WhiteCard from "@/components/whiteCard";
 import Button from "@/UI/Button";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { Updateuser } from "../../../../../actions/SettingsActions";
 
 export default function ChangeUserName({ uid }) {

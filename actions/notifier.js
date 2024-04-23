@@ -5,8 +5,7 @@ import { doc, updateDoc } from "firebase/firestore";
 async function prevNotification(id) {
   return userDatabase(id, "notifications");
 }
-
-export async function Notifier(userId, title, message) {
+export async function Notifier(userId, title, message, action, reference) {
   try {
     const prev = await prevNotification(userId);
     const DocRef = doc(db, "notifications", userId);
@@ -17,12 +16,14 @@ export async function Notifier(userId, title, message) {
           id: new Date().getTime(),
           title,
           message,
+          reference: reference || null,
+          action: action ? { ...action } : {},
           dateCreated: new Date().toISOString(),
         },
         ...prev,
       ],
     });
   } catch (err) {
-    console.log(err);
+    return err?.message;
   }
 }

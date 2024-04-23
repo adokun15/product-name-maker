@@ -39,7 +39,7 @@ export default function SidebarLink({ uid }) {
             href={`/overview/${uid}`}
             className={`${pathname === `/${uid}` ? "font-bold" : ""} block`}
           >
-            <p className="block">
+            <p className="block text-[0.9rem] md:text-[1.3rem]">
               <FontAwesomeIcon className="mr-4" icon={faHouse} />
               DashBoard
             </p>
@@ -51,7 +51,7 @@ export default function SidebarLink({ uid }) {
               pathname === `/${uid}/name-availablity` ? "font-bold" : ""
             } text-start my-5`}
           >
-            <p className="block">
+            <p className="block text-[0.9rem] md:text-[1.3rem]">
               <FontAwesomeIcon className="mr-4" icon={faBinoculars} />
               Name Availability Checker
             </p>
@@ -87,7 +87,7 @@ export default function SidebarLink({ uid }) {
               pathname === `/${uid}/subscription` ? "font-bold" : ""
             } text-start my-5`}
           >
-            <p className="block">
+            <p className="block text-[0.9rem] md:text-[1.3rem]">
               <FontAwesomeIcon className="mr-4" icon={faMoneyCheck} />
               Subscription
             </p>
@@ -99,7 +99,7 @@ export default function SidebarLink({ uid }) {
             } text-start my-5`}
           >
             {" "}
-            <p className="block">
+            <p className="block text-[0.9rem] md:text-[1.3rem]">
               <FontAwesomeIcon className="mr-4" icon={faHandshake} />
               Terms and Conditions
             </p>{" "}
@@ -111,7 +111,7 @@ export default function SidebarLink({ uid }) {
             } text-start my-5 capitalize`}
           >
             {" "}
-            <p className="block">
+            <p className="block text-[0.9rem] md:text-[1.3rem]">
               <FontAwesomeIcon className="mr-4" icon={faToolbox} />
               settings
             </p>{" "}

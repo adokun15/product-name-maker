@@ -7,7 +7,7 @@ const HistoryListPage = ({ listItems }) => {
   }
   return (
     <div className="text-black block">
-      {listItems.userID &&
+      {listItems?.history?.length !== 0 &&
         listItems?.history?.map((h) => (
           <li
             key={h.historyId}
@@ -33,9 +33,7 @@ const HistoryListPage = ({ listItems }) => {
             </p>
           </li>
         ))}
-      {listItems.userID && listItems?.history.length === 0 && (
-        <p>No History yet!</p>
-      )}
+      {listItems?.history?.length === 0 && <p>No History yet!</p>}
     </div>
   );
 };

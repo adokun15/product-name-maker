@@ -31,7 +31,7 @@ const ProfileNav = () => {
   return (
     <>
       <ModalOverview />
-      <div className="col-start-1 px-10 row-span-1 col-end-6  flex  md:justify-end justify-between pr-6 py-6 items-center">
+      <div className="col-start-1 px-10 row-span-1 col-end-6  flex  md:justify-end justify-between pr-6 py-6 bg-[rgba(255,255,255,0.94)] md:bg-none items-center">
         <button className="md:hidden text-3xl" onClick={toggleOverViewModal}>
           <FontAwesomeIcon icon={faBars} />
         </button>

@@ -1,21 +1,21 @@
 "use client";
 
-import { useAuth } from "@/utils/Provider/AuthProvider";
-
 import WhiteCard from "./whiteCard";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRightLong } from "@fortawesome/free-solid-svg-icons";
 import LoaderText from "@/app/overview/[uid]/_helper/LoaderText";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/utils/Provider/AuthProvider";
 export default function SettingPage() {
   //hooks(user, navigation)
   const auth = useAuth();
-  const router = useRouter();
-
-  if (auth.loading) return <LoaderText clr="text-orange-600" />;
 
   if (!auth.currentUser) return null;
 
+  const user = auth.currentUser;
+  const router = useRouter();
+
+  let initUrl = `/overview/${user?.uid}/settings`;
   return (
     <article>
       <WhiteCard cls="md:w-[72%] w-[95%] m-auto ">
@@ -30,7 +30,7 @@ export default function SettingPage() {
           <button
             className="text-gray-600 text-xl"
             onClick={() => {
-              router.push("profile_edit?edit=username");
+              router.push(`${initUrl}/profile_edit?edit=username`);
             }}
           >
             <FontAwesomeIcon icon={faArrowRightLong} />
@@ -44,7 +44,7 @@ export default function SettingPage() {
           <button
             className="text-gray-600 text-xl"
             onClick={() => {
-              router.push("profile_edit?edit=email");
+              router.push(`${initUrl}/profile_edit?edit=email`);
             }}
           >
             <FontAwesomeIcon icon={faArrowRightLong} />
@@ -58,13 +58,13 @@ export default function SettingPage() {
           <button
             className="text-gray-600 text-xl"
             onClick={() => {
-              router.push("profile_edit?edit=password");
+              router.push(`${initUrl}/profile_edit?edit=password`);
             }}
           >
             <FontAwesomeIcon icon={faArrowRightLong} />
           </button>
         </div>
-        {!auth?.currentUser?.emailVerified && (
+        {!user.emailVerified && (
           <div className="my-4 justify-between pr-5 items-center flex">
             <div>
               <h3 className="font-medium text-xl capitalize">
@@ -78,7 +78,7 @@ export default function SettingPage() {
             <button
               className="text-gray-600 text-xl"
               onClick={() => {
-                router.push("profile_edit?edit=verify_email");
+                router.push(`${initUrl}/profile_edit?edit=verify_email`);
               }}
             >
               <FontAwesomeIcon icon={faArrowRightLong} />
@@ -103,7 +103,7 @@ export default function SettingPage() {
           <button
             className="text-gray-600 text-xl"
             onClick={() => {
-              router.push("ai_edit?edit=theme");
+              router.push(`${initUrl}/ai_edit?edit=theme`);
             }}
           >
             <FontAwesomeIcon icon={faArrowRightLong} />
@@ -118,7 +118,7 @@ export default function SettingPage() {
           <button
             className="text-gray-600 text-xl"
             onClick={() => {
-              router.push("ai_edit?edit=name");
+              router.push(`${initUrl}/ai_edit?edit=name`);
             }}
           >
             <FontAwesomeIcon icon={faArrowRightLong} />
@@ -128,3 +128,7 @@ export default function SettingPage() {
     </article>
   );
 }
+
+/*
+ 
+*/

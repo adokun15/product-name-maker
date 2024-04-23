@@ -1,4 +1,5 @@
 "use client";
+import { useAuth } from "@/utils/Provider/AuthProvider";
 import Image from "next/image";
 import SubcribeImg from "../../../../public/illustrations/undraw_subscribe_vspl.svg";
 import WhiteCard from "@/components/whiteCard";
@@ -21,8 +22,13 @@ export function SmallerScreenImage() {
   </figure>;
 }
 export default function ProPlanPage({ id }) {
+  const user = useAuth();
+
+  if (!user.currentUser) return null;
+
   const [isLoading, setIsLoading] = useState(null);
   const [error, setError] = useState(null);
+
   const ActivateSubscriptionToPaymentGateWay = async () => {
     //link to gateway
     if (!id) return;
@@ -89,8 +95,9 @@ export default function ProPlanPage({ id }) {
         </div>
         <p className="text-red-800 opacity-80">{error ? error : ""}</p>
         <button
+          disabled={user.currentUser.emailVerified}
           onClick={ActivateSubscriptionToPaymentGateWay}
-          className="font-semibold capitalize bg-orange-600 text-white px-4 my-3 py-2"
+          className="font-semibold capitalize disabled:opacity-80 bg-orange-600 text-white px-4 my-3 py-2"
         >
           {isLoading ? <LoaderText clr="text-white" /> : "start now"}
         </button>
