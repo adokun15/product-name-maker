@@ -32,9 +32,11 @@ export default function ProPlanPage({ id }) {
   const ActivateSubscriptionToPaymentGateWay = async () => {
     //link to gateway
     if (!id) return;
+
     try {
       setIsLoading(true);
-      const { email } = await userDatabase(id);
+      // const { email } = await userDatabase(id);
+      const { email } = user.currentUser;
 
       const get_url = await fetch(`/api/subscriptions/PaymentMethod`, {
         method: "POST",
@@ -52,7 +54,7 @@ export default function ProPlanPage({ id }) {
       if (err?.message === "unavailable") {
         setError("You are Offline");
       } else {
-        setError(err?.message);
+        setError(err?.message?.message);
       }
     }
   };

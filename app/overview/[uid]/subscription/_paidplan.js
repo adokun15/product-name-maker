@@ -5,15 +5,17 @@ import Button from "@/UI/Button";
 import { ManageSubscription } from "@/utils/Subcription/UpdateSubCard";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import LoaderText from "../_helper/LoaderText";
 export default function PaidPlan({ id, sub_code }) {
   const [error_message, setErrorMessage] = useState("");
+
+  const [loading_external, setLoadingExternal] = useState(false);
 
   const router = useRouter();
 
   const viewSub = () => {
-    console.log(id, sub_code);
+    //    console.log(id, sub_code);
     if (!id || !sub_code) return;
-
     router.push(`/overview/${id}/subscription/${sub_code}`);
   };
 
@@ -22,20 +24,19 @@ export default function PaidPlan({ id, sub_code }) {
   };
 
   const ManageSub = async () => {
-    const subLink = await ManageSubscription();
-
-    console.log(subLink);
-
-    if (subLink?.error) {
-      setErrorMessage(subLink?.message);
-    }
-
-    const { url } = subLink;
-
-    alert(url);
-    if (typeof window !== "undefined") {
-      window.location.href = url;
-    }
+    setLoadingExternal(true);
+    await ManageSubscription(sub_code)
+      .then((link) => {
+        if (typeof window !== "undefined") {
+          window.location.href = link;
+        }
+      })
+      .catch((err) => {
+        setErrorMessage(err?.message);
+      })
+      .finally(() => {
+        setLoadingExternal(false);
+      });
   };
 
   if (!sub_code) {
@@ -61,7 +62,11 @@ export default function PaidPlan({ id, sub_code }) {
           View Subscription
         </Button>
         <Button onClick={ManageSub} className="font-bold my-6 text-white">
-          Manage Subscription
+          {loading_external ? (
+            <LoaderText clr="text-white" />
+          ) : (
+            "Manage Subscription"
+          )}
         </Button>
       </div>
     </div>

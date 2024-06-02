@@ -4,7 +4,7 @@ export async function POST(req) {
   const { email, userId } = await req.json();
 
   if (!email || !userId) {
-    return new Response("Unauthorized Access", { status: 401 });
+    return new Response("Unauthorized Access");
   }
   try {
     const authorization_url = await fetch(
@@ -18,7 +18,7 @@ export async function POST(req) {
         body: JSON.stringify({
           email,
           amount: 100 * 100,
-          callback_url: `http://localhost:3000/${userId}/subscription/result`,
+          callback_url: `${process.env.HOST}/overview/${userId}/subscription/result`,
           channels: ["card"],
           metadata: JSON.stringify({ userId }),
         }),
@@ -28,7 +28,7 @@ export async function POST(req) {
     const url_link = await authorization_url.json();
 
     if (!url_link.status) {
-      return new Response(url_link.message, { status: 500 });
+      return new Response(url_link?.message, { status: 500 });
     }
 
     return new Response(
@@ -39,7 +39,6 @@ export async function POST(req) {
       { status: 200 }
     );
   } catch (err) {
-    console.log("initialize Error: ", err);
     throw new Error(err?.message || err?.code);
   }
 }

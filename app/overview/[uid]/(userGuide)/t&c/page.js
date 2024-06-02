@@ -84,7 +84,7 @@ const TC = () => {
           <h3 className="text-xl font-bold my-4"> Contact Information </h3>
           <p>
             If you have any questions or concerns about these Terms, please
-            contact us at <a href="/notCreatedyet">amosdaniel2005@gmail.com</a>.
+            contact us at <b>contact.danielamos@gmail.com</b>.
           </p>
         </div>
       </div>

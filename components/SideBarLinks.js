@@ -15,6 +15,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 export default function SidebarLink({ uid }) {
   const pathname = usePathname();
 
+  if (!uid) return null;
+
   return (
     <>
       <section className="py-8 border-b-2 border-solid border-white">
@@ -37,7 +39,9 @@ export default function SidebarLink({ uid }) {
         <div className="mb-6 *:inline">
           <Link
             href={`/overview/${uid}`}
-            className={`${pathname === `/${uid}` ? "font-bold" : ""} block`}
+            className={`${
+              pathname === `overview/${uid}` ? "font-bold" : ""
+            } block`}
           >
             <p className="block text-[0.9rem] md:text-[1.3rem]">
               <FontAwesomeIcon className="mr-4" icon={faHouse} />
@@ -48,7 +52,7 @@ export default function SidebarLink({ uid }) {
           <Link
             href={`/overview/${uid}/name-availablity`}
             className={`${
-              pathname === `/${uid}/name-availablity` ? "font-bold" : ""
+              pathname === `overview/${uid}/name-availablity` ? "font-bold" : ""
             } text-start my-5`}
           >
             <p className="block text-[0.9rem] md:text-[1.3rem]">
@@ -84,7 +88,7 @@ export default function SidebarLink({ uid }) {
           <Link
             href={`/overview/${uid}/subscription`}
             className={`${
-              pathname === `/${uid}/subscription` ? "font-bold" : ""
+              pathname === `overview/${uid}/subscription` ? "font-bold" : ""
             } text-start my-5`}
           >
             <p className="block text-[0.9rem] md:text-[1.3rem]">
@@ -95,7 +99,7 @@ export default function SidebarLink({ uid }) {
           <Link
             href={`/overview/${uid}/t&c`}
             className={`${
-              pathname === `/${uid}/t&c` ? "font-bold" : ""
+              pathname === `overview/${uid}/t&c` ? "font-bold" : ""
             } text-start my-5`}
           >
             {" "}
@@ -107,7 +111,7 @@ export default function SidebarLink({ uid }) {
           <Link
             href={`/overview/${uid}/settings`}
             className={`${
-              pathname === `/${uid}/settings` ? "font-bold" : ""
+              pathname === `overview/${uid}/settings` ? "font-bold" : ""
             } text-start my-5 capitalize`}
           >
             {" "}

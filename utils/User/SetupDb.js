@@ -3,7 +3,7 @@ import { db } from "@/firebase/client";
 import { getApp } from "firebase/app";
 import { app } from "@/firebase/client";
 export async function SetUpdb(id, data, path = "users") {
-  const apps = getApp();
+  getApp();
   try {
     await setDoc(doc(db, path, id), { ...data }).catch((error) => {
       const errorCode = error.code;
@@ -19,3 +19,5 @@ export async function SetUpdb(id, data, path = "users") {
     throw new Error(JSON.stringify(err, { status: err?.status || 500 }));
   }
 }
+
+export async function GetCustomerCode(emqil) {}

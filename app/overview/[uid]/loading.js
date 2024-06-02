@@ -6,6 +6,5 @@ import OverViewLoader from "@/components/OverViewLoader";
 export default function Loader() {
   const pathname = usePathname();
 
-  if (pathname === "/overview") return <OverViewLoader />;
-  return <LoaderText />;
+  return <LoaderText clr="text-orange-700" />;
 }

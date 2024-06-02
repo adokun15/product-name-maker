@@ -18,69 +18,83 @@ export async function Updateuser(uid, data) {
   try {
     const CustomerCode = data.customer_code;
 
-    if (!data.email || !data.name)
-      return { error: true, message: "Invalid Request!", status: 500 };
-
     if (data.email) {
-      const firebase_update = await auth().updateUser(uid, {
+      await auth().updateUser(uid, {
         email: data?.email,
       });
 
-      if (!CustomerCode) {
+      if (CustomerCode) {
         await UpdateCustomer({ email: data.email }, CustomerCode);
       }
 
-      console.log(firebase_update);
-
-      return firebase_update;
+      return { message: "Profile Email udated!" };
     }
 
     if (data?.name) {
-      const firebase_update = await auth().updateUser(uid, {
+      await auth().updateUser(uid, {
         displayName: data?.name,
       });
-      if (!CustomerCode) {
-        await UpdateCustomer({ email: data?.name }, CustomerCode);
+
+      if (CustomerCode) {
+        await UpdateCustomer({ first_name: data?.name }, CustomerCode);
       }
-      console.log(firebase_update);
-      return firebase_update;
+      return { message: `Username Has Been Updated to ${data.name}` };
     }
 
     if (data?.password) {
-      const firebase_update = await auth().updateUser(uid, {
+      await auth().updateUser(uid, {
         password: data?.password,
       });
 
-      console.log(firebase_update);
-      return firebase_update;
+      return { message: `Password Has Been Updated!` };
     }
+
+    return { error: true, message: "Invalid Request!", status: 500 };
   } catch (err) {
-    return { error: true, message: err?.message, status: 500 };
+    if (err?.message?.includes("failed to fetch")) {
+      throw new Error("No Internet Connection");
+    } else {
+      throw new Error(err?.message);
+    }
   }
 }
 
 export async function UpdateAi(uid, settings, data) {
-  //data: name;(string)
-  //data: color(purple, cyan ), size:{8,16,32}, font(italic, more-bold, bold)
-  //setting: name, theme
   if (!uid) {
     return { error: true, message: "unauthorized access", status: 401 };
+  }
+  async function timeout(t = 1) {
+    return new Promise(function (_, reject) {
+      setTimeout(function () {
+        reject(`Request took too long! `);
+      }, t * 1000);
+    });
   }
 
   try {
     if (settings === "name" && data && uid) {
-      const update_ai = await UpdateUserDatabase(uid, "users", {
-        ai_name: data.name,
+      await Promise.race([
+        timeout(10),
+        UpdateUserDatabase(uid, "users", {
+          ai_name: data.name,
+        }),
+      ]).catch((e) => {
+        throw new Error(e?.message || e || "SOMETHING WENT WRONG");
       });
-      console.log("SuccessFully Updated Ai Name", update_ai);
+      return { message: "SuccessFully Updated AI Name" };
     }
 
     if (settings === "theme" && data && uid) {
-      const update_ai = await UpdateUserDatabase(uid, "users", {
-        //ai_theme: { ai_theme_color, ai_font_style, ai_font_size}
-        ai_theme: { ...data },
+      await Promise.race([
+        timeout(10),
+        UpdateUserDatabase(uid, "users", {
+          ai_theme: { ...data },
+        }),
+      ]).catch((e) => {
+        throw new Error(e?.message || e || "SOMETHING WENT WRONG");
       });
-      console.log("SuccessFully Updated Ai Theme", update_ai);
+
+      return { message: "SuccessFully Updated AI Theme" };
     }
 
     return { message: "Invalid Request", status: 500, error: true };

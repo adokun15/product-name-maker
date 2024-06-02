@@ -1,4 +1,4 @@
-import { NameGenerator } from "@/utils/OpenAi/NameGenerator";
+import OpenAI from "openai";
 import { NextResponse } from "next/server";
 import {
   AiLimitReached,
@@ -7,46 +7,65 @@ import {
 } from "@/lib/api-limits";
 import { UpdateUserHistory } from "@/utils/User/UpdateUser";
 
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
 export async function POST(req) {
   try {
-    const { prompt, service, userId, token_left } = await req.json();
+    const pro_assistant = process.env.OPENAI_API_ASSISTANT_PRO;
+    const assistant = process.env.OPENAI_API_ASSISTANT;
+
     //Get Current User From FireBase Auth,
+    const { prompt, service, userId, token_left } = await req.json();
+
+    const ispro = token_left === "UNLIMITED";
 
     if (!userId) {
-      return new Response("Unauthorized Access", { status: 401 });
+      return new NextResponse({
+        message: "Unauthorized Access",
+        status: 401,
+      });
     }
 
     //Check If user is on Free Trial
     const freeTrial = await AiLimitReached(userId);
 
     if (freeTrial) {
-      return new Response("Your token has been exhausted", { status: 403 });
+      return new NextResponse("Your token has been exhausted", { status: 403 });
     }
 
     //check user Input value
     if (!prompt) {
-      return new NextResponse("Prompt texts is Empty!", { status: 500 });
+      return new NextResponse("Prompt texts is Empty!", { status: 400 });
     }
 
     //Calculate Token
-    const CheckExceeded = await TokenExceeded(prompt, token_left);
+    //    const CheckExceeded = await TokenExceeded(prompt, token_left);
 
-    if (!CheckExceeded) {
-      return new Response(
-        "Your remaining token is not enough to complete the request",
-        { status: 403 }
-      );
-    }
+    ////  if (!CheckExceeded) {
+    //    return new NextResponse(
+    //   "Your remaining token is not enough to complete the request",
+    //   { status: 529 }
+    // );
+    //    }
 
-    let ispro = token_left === "EXPIRED";
-    const data = await NameGenerator(prompt, ispro);
-
-    if (!data || data?.error) {
-      throw new Error("Could not Complete AI request!");
-    }
+    const completion = await openai.chat.completions.create({
+      messages: [
+        {
+          role: "system",
+          content: ispro ? pro_assistant : assistant,
+        },
+        { role: "user", content: prompt },
+      ],
+      model: "gpt-3.5-turbo",
+      temperature: 0.6,
+    });
 
     //const tokenUsed = data.usage.totalToken;
-    const tokenUsed = data.usage.promptToken;
+
+    //You stop here
+    const tokenUsed = completion.usage.prompt_tokens;
 
     //Increase Ai Limit
     await DecreaseAiLimit(userId, tokenUsed);
@@ -55,16 +74,33 @@ export async function POST(req) {
     const date = new Date();
     const nowDate = date.toISOString();
 
+    //history update
     await UpdateUserHistory(userId, {
       dateCreated: nowDate,
-      result: data.message,
-      historyId: data.chatId,
+      result: completion.choices[0].message.content,
+      historyId: completion.id,
       service,
-      usage: data.usage,
+      usage: {
+        totalToken: completion.usage.total_tokens,
+        completionToken: completion.usage.completion_tokens,
+        promptToken: completion.usage.prompt_tokens,
+      },
     });
 
-    return new Response(JSON.stringify({ ...data }));
+    return new NextResponse(
+      JSON.stringify({
+        message: completion.choices[0].message.content,
+        created: completion.created,
+        chatId: completion.id,
+        usage: {
+          totalToken: completion.usage.total_tokens,
+          completionToken: completion.usage.completion_tokens,
+          promptToken: completion.usage.prompt_tokens,
+        },
+      }),
+      { status: 200 }
+    );
   } catch (err) {
-    throw new Error(err?.message);
+    return new NextResponse(JSON.stringify(err?.message), { status: 500 });
   }
 }

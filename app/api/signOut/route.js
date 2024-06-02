@@ -6,8 +6,6 @@ export async function POST(request) {
     value: "",
     maxAge: -1,
   };
-
   cookies().set(options);
-
   return NextResponse.json({}, { status: 200 });
 }

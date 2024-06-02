@@ -238,7 +238,7 @@ const AuthForm = ({ redirect_error }) => {
         setFormError("");
       })
       .catch((err) => {
-        setFormError(err?.message || err?.code);
+        setFormError(err?.code || err?.message);
       })
       .finally(() => {
         setIsLoading(false);

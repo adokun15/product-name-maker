@@ -33,7 +33,12 @@ export default function AuthProvider({ children }) {
           if (!userCred) return;
 
           //Initialize DB
-          // await InitializeDb(userCred.user.uid)
+          if (
+            userCred?.user?.metadata?.creationTime ===
+            userCred?.user?.metadata?.lastSignInTime
+          ) {
+            await InitializeDb(userCred?.user?.uid);
+          }
 
           await fetch("/api/login", {
             method: "POST",
@@ -78,16 +83,16 @@ export default function AuthProvider({ children }) {
         .then(async (userCred) => {
           //createExpirationCookies(userCred.stsTokenManger?.expires)
           if (!userCred) return;
+          //Initialize DB
+          await InitializeDb(userCred.user.uid, userCred.user.email, username);
 
           //Create DisplayName
+
           if (username) {
             await UpdateUserName(username);
           } else {
             await UpdateUserName(emailStr.split("@")[0]);
           }
-
-          //Initialize DB
-          await InitializeDb(userCred.user.uid);
 
           await fetch("/api/login", {
             method: "POST",

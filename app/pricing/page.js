@@ -18,7 +18,6 @@ const Pricing = () => {
   ];
   const paidlist = [
     "Unlimited tokens for a month",
-    "Generate results in 5 different languages",
     "Get more AI Suggestions",
     "Use TradeMark AI for Name Validity",
   ];

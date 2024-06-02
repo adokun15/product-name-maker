@@ -73,10 +73,12 @@ export default async function AiActivity({ uid }) {
   if (!listItems || listItems?.error)
     return (
       <WhiteCard cls=" my-10 bg-white block md:w-4/5 w-full  px-[2rem]">
-        <p>
-          {listItems?.errorMesage ||
-            "Something Went Wrong loading Ai Activities"}
-        </p>
+        <div className="font-bold text-center leading-7">
+          <h1 className="text-xl">Something went Wrong</h1>
+          <p className="text-red-500 ">
+            {listItems?.errorMesage || "An unkwown error has Occured"}
+          </p>
+        </div>
       </WhiteCard>
     );
 

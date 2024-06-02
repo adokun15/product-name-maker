@@ -15,7 +15,7 @@ export async function POST(req, res) {
 
     if (decodedToken) {
       //One hour
-      const expiration_time = 60 * 60 * 1000;
+      const expiration_time = 24 * 60 * 60 * 1000;
 
       const sessionCookies = await auth().createSessionCookie(idToken, {
         expiresIn: expiration_time,

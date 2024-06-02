@@ -12,7 +12,7 @@ export default async function Notification({ params }) {
     </div>;
   }
 
-  if (notification.error && notification.length !== 0) {
+  if (notification.error) {
     return (
       <ServerErrorPage
         status={notification?.status}
@@ -26,7 +26,7 @@ export default async function Notification({ params }) {
       <h1 className="text-5xl mb-6 text-orange-700 ml-4">Notifications</h1>
       <NotificationList
         notifications={notification?.notifications}
-        id={notification?.userId}
+        id={params.uid}
       />
     </div>
   );

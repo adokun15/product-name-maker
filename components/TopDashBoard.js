@@ -18,7 +18,7 @@ export default function TopDashBoard({ children }) {
     <>
       <h2 className="text-2xl font-medium">Profile</h2>
 
-      <div className="rounded bg-gradient-to-r *:mb-5 block md:gap-y-[1rem] md:gap-x-[2rem] md:flex p-5 shadow from-orange-500 to-orange-400 md:w-4/5  w-full">
+      <div className=" from-orange-500 bg-gradient-to-br md:w-4/5 px-3 py-2 rounded  to-orange-400 ">
         <div className="col-span-2">
           <Image
             className="block m-auto rounded-[50%]"
@@ -30,7 +30,7 @@ export default function TopDashBoard({ children }) {
             alt="PROFILE image"
           />
         </div>
-        <div className="text-white w-full *:mb-3">
+        <div className="text-white w-full *:mb-3 ">
           <article>
             <h1 className="font-bold">Name</h1>
             <p>{displayName ? displayName : "...."}</p>

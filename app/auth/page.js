@@ -20,7 +20,16 @@ const AuthBody = () => {
     getRedirectResult(auth)
       .then(async (userCred) => {
         if (!userCred) return;
-        fetch("/api/login", {
+
+        //Initialize DB
+        if (
+          userCred?.user?.metadata?.creationTime ===
+          userCred?.user?.metadata?.lastSignInTime
+        ) {
+          await InitializeDb(userCred?.user?.uid);
+        }
+
+        await fetch("/api/login", {
           method: "POST",
           headers: {
             Authorization: `Bearer ${await userCred.user.getIdToken()}`,

@@ -2,7 +2,6 @@ import {
   faBookOpen,
   faLanguage,
   faPenClip,
-  faPenRuler,
   faPeopleGroup,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -12,9 +11,9 @@ const OtherFeatures = () => {
   const dummy_Object = [
     {
       id: "feature1",
-      name: "Language Diversity",
+      name: "AI Suggestions Diversity",
       description:
-        "Offer naming suggestions in multiple languages or consider cultural nuances for global appeal.",
+        "Offer naming suggestions in different style and wide variety selection",
       icon: faLanguage,
     },
     {
@@ -37,12 +36,6 @@ const OtherFeatures = () => {
       description:
         " Perform checks to ensure suggested names are not already trad-emarked or in use by other companies.",
       icon: faBookOpen,
-    },
-    {
-      id: "feature5",
-      name: "Name Alignment",
-      description: ".",
-      icon: faPenRuler,
     },
   ];
   return (

@@ -28,20 +28,24 @@ const TradeMarkCheck = () => {
 
   useEffect(() => {
     const pro_acc = async () => {
-      const ispro = await IsPro(uid);
-      if (!ispro?.error) {
-        setPro({ error: ispro?.error, message: ispro?.message });
-      } else {
-        setPro(ispro);
-      }
+      await IsPro(uid)
+        .then((data) => {
+          if (!data?.error) {
+            setPro({ error: data?.error, message: data?.message });
+          }
+          setPro(data);
+        })
+        .catch((e) => {
+          setPro({ error: true, message: e?.message });
+        });
     };
     pro_acc();
   }, []);
 
   async function handleSubmit(ev) {
     ev.preventDefault();
-    setUi(() => {
-      return { loading: true };
+    setUi((p) => {
+      return { loading: true};
     });
 
     if (tradeMarkInput === "") {
@@ -51,29 +55,29 @@ const TradeMarkCheck = () => {
       return;
     }
 
-    try {
-      const promptRequest = await fetch("/api/namify/trademarkCheck", {
-        method: "POST",
-        body: JSON.stringify({ prompt: tradeMarkInput }),
-      });
-
-      if (!promptRequest.ok) {
-        throw new Error("Something Went Wrong");
-      }
-      const data = await promptRequest.json();
-
-      setUi(() => {
-        return { loading: false };
-      });
-      setResult(data);
-    } catch (err) {
-      setUi(() => {
-        return { loading: false };
-      });
-      setUi(() => {
-        return { AiError: err?.message };
-      });
-    }
+    await fetch("/api/namify/trademarkCheck", {
+      method: "POST",
+      body: JSON.stringify({ prompt: tradeMarkInput }),
+    })
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error("Something Went Wrong");
+        }
+        return res.json();
+      })
+      .then((data) => {
+        setResult(data);
+      })
+      .catch((err) => {
+        setUi((p) => {
+          return { AiError: err?.message, ...p };
+        });
+      })
+      .finally(() => [
+        setUi((p) => {
+          return { loading: false, ...p };
+        }),
+      ]);
   }
   return (
     <div>
@@ -96,10 +100,10 @@ const TradeMarkCheck = () => {
           disabled={!isPro || isPro?.error}
           className="mt-5 px-4 disabled:opacity-70 bg-orange-600 py-1 rounded text-white"
         >
-          {ui.loading ? "verifying..." : "Verify"}
+          {ui.loading ? <LoaderText clr="text-white" /> : "Verify"}
         </button>
       </form>
-      {(!isPro || !isPro?.error) && (
+      {(!isPro || isPro?.error) && (
         <WhiteCard cls="mt-5 md:w-3/5 m-auto w-[89%]">
           <header className="font-bold text-xl capitalize mb-4">
             {isPro?.error
@@ -107,9 +111,8 @@ const TradeMarkCheck = () => {
               : "You do not have a Pro Account"}
           </header>
           <p className="font-medium">
-            <FontAwesomeIcon icon={faRobot} />
+            <FontAwesomeIcon icon={faRobot} /> :
             <span>
-              :
               {isPro?.error
                 ? isPro?.message
                 : "Subcribe to Pro Plan to enjoy this feature"}

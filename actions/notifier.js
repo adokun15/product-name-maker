@@ -1,4 +1,4 @@
-import { db } from "@/utils/firebase";
+import { db } from "@/firebase/client";
 import { userDatabase } from "@/utils/User/GetUser";
 import { doc, updateDoc } from "firebase/firestore";
 

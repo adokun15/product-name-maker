@@ -4,7 +4,7 @@ import ChangeAITheme from "./_changeAiTheme";
 import ServerErrorPage from "@/components/ServerErrorPage";
 
 export default async function AiEdit({ params, searchParams }) {
-  const getAIcustomization = await userDatabase(params?.uid);
+  /*const getAIcustomization = await userDatabase(params?.uid);
 
   if (getAIcustomization?.error) {
     return (
@@ -14,10 +14,13 @@ export default async function AiEdit({ params, searchParams }) {
       />
     );
   }
+  */
 
-  const Namedata = getAIcustomization?.ai_name ?? null;
+  //let Namedata = getAIcustomization?.ai_name ?? null;
+  let Namedata = null;
 
-  const ThemeData = getAIcustomization?.ai_theme ?? null;
+  //const ThemeData = getAIcustomization?.ai_theme ?? null;
+  let ThemeData = null;
 
   switch (searchParams.edit) {
     case "theme":

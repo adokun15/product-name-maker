@@ -3,8 +3,6 @@ import { useState } from "react";
 import { userDatabase } from "@/utils/User/GetUser";
 import { useAuth } from "@/utils/Provider/AuthProvider";
 import { useModal } from "@/utils/Provider/ModalProvider";
-import { headers } from "@/next.config";
-
 export const AiPrompt = (props) => {
   //gET currently Logged USER
   const user = useAuth();
@@ -20,16 +18,13 @@ export const AiPrompt = (props) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  //Store Token State
-  //const [token_left, setToken] = useState(0);
-
   //Get input State
   const [promptTitle, setPromptTitle] = useState("");
   const [promptDesc, setPromptDesc] = useState("");
   const [qty, setQty] = useState(1);
 
+  //modal
   const { toggleModalInfo } = useModal();
-
   async function callUser() {
     try {
       //console.log(uid);
@@ -37,12 +32,11 @@ export const AiPrompt = (props) => {
       setLoading(true);
       const getUser = await userDatabase(uid, "users");
       setLoading(false);
-      return getUser.token;
       setError("");
+      return { ...getUser };
     } catch (err) {
       setLoading(false);
       setError("");
-
       props.ErrorHandler(err);
     }
   }
@@ -70,7 +64,7 @@ export const AiPrompt = (props) => {
       return;
     }
 
-    const token_left = await callUser();
+    const { token: token_left, ai_name, ai_theme } = await callUser();
 
     const prompt = `This is for a ${title.prompt}. I want ${
       qty ? qty : 1
@@ -79,7 +73,7 @@ export const AiPrompt = (props) => {
     } about ${promptTitle}. ${promptDesc}`;
     //post request
 
-    if (!token_left || token_left <= 0 || token_left == "EXPIRED") {
+    if (!token_left || token_left <= 0 || token_left === "EXPIRED") {
       toggleModalInfo({
         isOpened: true,
         message: `${
@@ -94,43 +88,69 @@ export const AiPrompt = (props) => {
       return;
     }
 
-    try {
-      setLoading(true);
-      const promptRequest = await fetch("/api/namify/ai", {
-        method: "POST",
-        body: JSON.stringify({
-          prompt,
-          userId: uid,
-          service: title.prompt,
-          token_left,
-        }),
+    setLoading(true);
+
+    await fetch("/api/namify/ai", {
+      method: "POST",
+      body: JSON.stringify({
+        prompt,
+        userId: uid,
+        service: title.prompt,
+        token_left,
+      }),
+    })
+      .then((res) => {
+        if (res.status === 400) {
+          props.ErrorHandler("Bad Input Request!");
+          return;
+        }
+
+        if (res?.status === 403) {
+          props.ErrorHandler("Free Trial Ended. Token Has been Exhausted!");
+          return;
+        }
+        if (res?.status === 500) {
+          props.ErrorHandler("Could not Complete AI request");
+          return;
+        }
+        if (res?.status === 529) {
+          props.ErrorHandler("Maximum Token Exceeded!");
+          return;
+        }
+
+        return res.json();
+      })
+      .then((data) => {
+        //result
+        props.resultHandler(data);
+
+        //ai
+        if (ai_theme || ai_name) {
+          props.AI({ name: ai_name, theme: ai_theme });
+        }
+      })
+      .catch((err) => {
+        setError(() => {
+          return {
+            isError: true,
+            errorMessage: err?.message || "Something went wrong!",
+          };
+        });
+        props.ErrorHandler(err?.message || "Could not complete AI request");
+      })
+      .finally(() => {
+        setLoading(false);
+        setError("");
       });
-
-      const data = await promptRequest.json();
-
-      setLoading(false);
-
-      setError("");
-      // console.log(token_left);
-      props.resultHandler(data);
-    } catch (err) {
-      setLoading(false);
-      setError(() => {
-        return { isError: true, errorMessage: err?.message };
-      });
-      setError("");
-      console.log(err);
-      props.ErrorHandler(err?.message);
-    }
   }
 
   return (
     <>
       <form
-        className="*:block *:my-3 py-4 m-auto md:mx-0 md:w-[70%] w-[90%] "
+        className="*:block *:my-3 py-4 m-auto md:mx-0 md:w-[100%] w-[90%] "
         onSubmit={handleSubmit}
       >
-        <p className="text-red-600 mb-3 md:text-start text-center font-bold text-xl">
+        <p className="text-red-600 mb-3 md:text-start text-center italic text-xl">
           {error ? error : ""}
         </p>{" "}
         <label>{title.name}</label>
@@ -166,7 +186,7 @@ export const AiPrompt = (props) => {
           className=" bg-orange-600  px-5 py-2 rounded text-white md:w-3/5 w-full disabled:opacity-90 disabled:bg-orange-500"
           disabled={loading}
         >
-          {loading ? "Namify is thinking..." : "Generate"}
+          {loading ? "AI is thinking..." : "Generate"}
         </button>
       </form>
     </>

@@ -1,16 +1,4 @@
-/*
- abandoned	 The customer has not completed the transaction.
-failed	     The transaction failed. For more information on why, refer to the message/gateway response.
-ongoing	    The customer is currently trying to carry out an action to complete the transaction. This can get returned when we're waiting on the customer to enter an otp or to make a transfer (for a pay with transfer transaction).
-pending	     The transaction is currently in progress.
-processing   Same as pending, but for direct debit transactions.
-queued	     The transaction has been queued to be processed later. Only possible on bulk charge transactions.
-reversed	 The transaction was reversed. This could mean the transaction was refunded, or a chargeback was successfully logged for this transaction.
-success	
- */
-
 import { FREE_TOKEN, PAYSTACK_API_KEY, PAYSTACK_API_URL } from "@/lib/constant";
-import { headers } from "@/next.config";
 import { UpdateUserDatabase } from "@/utils/User/UpdateUser";
 
 export async function GET(request) {
@@ -37,8 +25,7 @@ export async function GET(request) {
     const response = await verificationResponse.json();
 
     if (!response.status) {
-      console.log(response);
-      return new Response(response.message, { status: 500 });
+      throw new Error(response.message);
     }
 
     //notifier

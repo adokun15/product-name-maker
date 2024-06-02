@@ -16,7 +16,6 @@ export async function SendEmailVerification(user) {
   }
   try {
     await sendEmailVerification(user);
-
     return {
       success: true,
       message: "Email Verification Link Sent Successfully!",

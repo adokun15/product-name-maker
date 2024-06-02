@@ -5,38 +5,40 @@ import WhiteCard from "./whiteCard";
 import { useState } from "react";
 import Button from "@/UI/Button";
 
-import { useFormState } from "react";
-
 const FormResponse = ({ onclose, action, formCred, header }) => {
   return (
     <>
-      <form onSubmit={action}>
-        <h1>{header}</h1>
+      <form onSubmit={action} className="leading-10">
+        <h1 className="font-bold text-3xl mb-3">{header}</h1>
         {formCred.map((cred) => {
           {
-            cred.entries((title, obj) => {
-              <>
-                <label>{title}</label>
-                <input name={title} type={obj.type} maxLength={obj.maxLength} />
-              </>;
-            });
+            <div className="my-5">
+              <label>{cred?.name}</label>
+              <input
+                className={`block border-1 w-full border-solid mt-2 rounded border-black bg-slate-300
+                placeholder:text-black px-3 py-4  focus:filter transition-all outline-gray-400`}
+                name={cred?.name}
+                type={cred.type}
+                maxLength={cred.maxLength}
+              />
+            </div>;
           }
         })}
         <Button>Submit</Button>
       </form>
-      <Button onClick={onclose}>Close</Button>
+      <Button className="mt-8" onClick={onclose}>
+        Close
+      </Button>
     </>
   );
 };
 
 const ConfirmResponse = ({ action, message, header }) => {
   return (
-    <div>
-      <h1>{header}</h1>
-
-      <p>{message}</p>
-
-      <div>
+    <div className="leading-10">
+      <h1 className="font-bold text-3xl mb-3">{header}</h1>
+      <p className="mb-5 font-medium">{message}</p>
+      <div className="flex gap-3">
         <Button onClick={onclose}>Close</Button>
         <Button onClick={action}>Confirm</Button>
       </div>
@@ -45,10 +47,10 @@ const ConfirmResponse = ({ action, message, header }) => {
 };
 const MessageResponse = ({ onclose, header, message }) => {
   return (
-    <div>
+    <div className="leading-10">
       <h1 className="font-bold text-3xl mb-3">{header}</h1>
 
-      <p>{message}</p>
+      <p className="mb-5 font-medium">{message}</p>
 
       <Button onClick={onclose}>Close</Button>
     </div>
@@ -69,15 +71,15 @@ export const ModalInfo = () => {
           ></div>
 
           <WhiteCard
-            cls={`fixed z-[1200] h-fit w-[90%] md:w-[70%] left-[15%] py-5 top-[0%] md:top-[5%] my-[1rem] bg-white m-auto `}
+            cls={`fixed z-[1200] h-fit w-[90%] md:w-[50%] left-[5%] md:left-[25%] py-5 top-[0%] md:top-[5%] my-[1rem] bg-white m-auto `}
           >
             {" "}
-            {formCred && action && !message && (
+            {formCred && action && message && (
               <FormResponse
                 action={action}
                 onclose={toggleModalInfo}
                 header={header}
-                fromCred={formCred}
+                formCred={formCred}
               />
             )}
             {!formCred && action && message && (

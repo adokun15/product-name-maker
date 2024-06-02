@@ -2,21 +2,15 @@ import { IsPro } from "@/lib/BoolFunctions";
 import { userDatabase } from "@/utils/User/GetUser";
 import React from "react";
 
-async function GetUserFunc(id) {
-  try {
-    return user;
-  } catch (err) {
-    return { error: err?.message };
-  }
-}
-
 export default async function SideDashboard({ uid }) {
-  const user = await userDatabase(uid);
   const isPro = await IsPro(uid);
+  const user = await userDatabase(uid);
 
-  if (user.error) {
+  if (!user || user?.error || !isPro || isPro?.error) {
     <div>
-      <p className="font-bold text-xl text-center">{user?.message}</p>
+      <p className="font-bold text-xl text-center">
+        {user?.message || "Something went wrong"}
+      </p>
     </div>;
   }
 
@@ -24,11 +18,17 @@ export default async function SideDashboard({ uid }) {
     <div className="text-white *:mb-3">
       <article>
         <h1 className="font-bold">Token Left</h1>
-        <p>{user?.token || "..."}</p>
+        <p>
+          {user?.token <= 0
+            ? 0
+            : user?.token || user?.token === "UNLIMITED"
+            ? user?.token
+            : "..."}
+        </p>
       </article>
       <article>
         <h1 className="font-bold">Plans</h1>
-        <p>{isPro ? "Pro Plan" : "Free Plan"}</p>
+        <p>{isPro && !isPro?.error ? "Pro Plan" : "You are on a free Plan"}</p>
       </article>
     </div>
   );
